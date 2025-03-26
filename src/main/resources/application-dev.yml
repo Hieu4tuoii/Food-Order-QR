@@ -1,0 +1,36 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  devtools:
+    add-properties: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/webmoviev2
+    username: webmoviev2
+    password: webmoviev2
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+# OpenAPI configuration
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+openapi:
+  service:
+    api-docs: backend-service
+    server: http://54.85.77.70:${server.port}
+    title: Backend service
+    version: 1.0.0
+
+jwt:
+  expiryMinutes: 5
+  expiryDay: 14
+  accessKey: TCWX/PoH4ze9qdhTm7YAmwKf0qBrKSnF5fdwfUlLTEA=
+  refreshKey: YJoOPyEuDpwNqlsFnRrttjBpLsHYVe5T4ekB1IBFM0U=
