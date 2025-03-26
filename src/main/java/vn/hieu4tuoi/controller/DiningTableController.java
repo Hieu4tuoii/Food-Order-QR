@@ -61,7 +61,7 @@ public class DiningTableController {
                                              @Valid @RequestBody DiningTableRequest request) {
         log.info("Updating dining table id: {} with request: {}", id, request);
         diningTableService.update(id, request);
-        return new ResponseData<>(HttpStatus.OK.value(), "Update dining table successfully", null);
+        return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Update dining table successfully", null);
     }
 
     @Operation(summary = "Delete dining table")
@@ -69,6 +69,6 @@ public class DiningTableController {
     public ResponseData<?> deleteDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") Long id) {
         log.info("Deleting dining table id: {}", id);
         diningTableService.delete(id);
-        return new ResponseData<>(HttpStatus.OK.value(), "Delete dining table successfully", null);
+        return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Delete dining table successfully", null);
     }
 }

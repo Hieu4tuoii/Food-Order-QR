@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import vn.hieu4tuoi.dto.request.food.FoodCreationRequest;
+import vn.hieu4tuoi.dto.request.food.FoodUpdateRequest;
 import vn.hieu4tuoi.dto.respone.food.FoodDetailResponse;
 import vn.hieu4tuoi.dto.respone.PageResponse;
 import vn.hieu4tuoi.dto.respone.food.FoodResponse;
@@ -67,7 +68,7 @@ public class FoodServiceImpl implements FoodService {
                         .build())
                 .collect(java.util.stream.Collectors.toList());
 
-        log.info("Got comment by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
+        log.info("Got food by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
         return PageResponse.builder()
                 .pageNo(page + 1)
                 .pageSize(size)
@@ -105,13 +106,22 @@ public class FoodServiceImpl implements FoodService {
         }
 
         List<Food> foodList = foodPage.getContent();
+        //map sang foodResponse
+        List<FoodResponse> foodResponseList = foodList.stream()
+                .map(food -> FoodResponse.builder()
+                        .id(food.getId())
+                        .name(food.getName())
+                        .price(food.getPrice())
+                        .imageUrl(food.getImageUrl())
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
 
-        log.info("Got food by categoryId {}, keyword {} sort: {}, page: {}, size: {}", categoryId,  keyword, sort, page, size);
+        log.info("Got food by categoryId {} keyword {} sort: {}, page: {}, size: {}", categoryId,  keyword, sort, page, size);
         return PageResponse.builder()
                 .pageNo(page + 1)
                 .pageSize(size)
                 .totalPage(foodPage.getTotalPages())
-                .items(foodList)
+                .items(foodResponseList)
                 .build();
     }
 
@@ -143,5 +153,34 @@ public class FoodServiceImpl implements FoodService {
                 .build();
         foodRepository.save(food);
         return food.getId();
+    }
+
+    @Override
+    public void update(FoodUpdateRequest request) {
+        log.info("Updating food with id: {}", request.getId());
+        Food food = foodRepository.findById(request.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
+        
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        
+        food.setName(request.getName());
+        food.setDescription(request.getDescription());
+        food.setPrice(request.getPrice());
+        food.setImageUrl(request.getImageUrl());
+        food.setCategory(category);
+        
+        foodRepository.save(food);
+        log.info("Food updated successfully: {}", food.getId());
+    }
+
+    @Override
+    public void delete(Long foodId) {
+        log.info("Deleting food with id: {}", foodId);
+        Food food = foodRepository.findById(foodId)
+                .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
+        
+        foodRepository.delete(food);
+        log.info("Food deleted successfully: {}", foodId);
     }
 }

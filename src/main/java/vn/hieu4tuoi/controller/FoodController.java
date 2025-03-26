@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.hieu4tuoi.dto.request.food.FoodCreationRequest;
+import vn.hieu4tuoi.dto.request.food.FoodUpdateRequest;
 import vn.hieu4tuoi.dto.respone.food.FoodDetailResponse;
 import vn.hieu4tuoi.dto.respone.ResponseData;
 import vn.hieu4tuoi.service.FoodService;
@@ -48,7 +49,7 @@ public class FoodController {
             description = "keyword: tu khoa tim kiem (ko bắt buoc), sort: sap xep theo cot nao va chieu tang dan hoac giam dan(ko bat buoc), page (mac dinh trang 1), size: (mac dinh 10"
     )
     @GetMapping("/")
-    public ResponseData<?> getReplyCommentByParentId(@RequestParam(value = "keyword", required = false) String keyword,
+    public ResponseData<?> getFoodList(@RequestParam(value = "keyword", required = false) String keyword,
                                                      @RequestParam(value = "page", defaultValue = "1") int page,
                                                      @RequestParam(value = "size", defaultValue = "10") int size,
                                                      @RequestParam(value = "sort", required = false) String sort) {
@@ -61,7 +62,7 @@ public class FoodController {
             description = "keyword: tu khoa tim kiem (ko bắt buoc), sort: sap xep theo cot nao va chieu tang dan hoac giam dan(ko bat buoc), page (mac dinh trang 1), size: (mac dinh 10"
     )
     @GetMapping("/category/{categoryId}")
-    public ResponseData<?> getReplyCommentByParentId(@PathVariable String categoryId,
+    public ResponseData<?> getFoodListByCategoryId(@PathVariable String categoryId,
                                                      @RequestParam(value = "keyword", required = false) String keyword,
                                                      @RequestParam(value = "page", defaultValue = "1") int page,
                                                      @RequestParam(value = "size", defaultValue = "10") int size,
@@ -69,7 +70,22 @@ public class FoodController {
         log.info("Getting food list by category id {} keyword {} sort: {}, page: {}, size: {}", categoryId, keyword, sort, page, size);
         return new ResponseData<>(HttpStatus.OK.value(), "get food list success", foodService.getFoodListByCategoryId(categoryId, keyword, sort, page, size));
     }
-
-
-
+    
+    //update food
+    @Operation(summary = "Update food")
+    @PutMapping("/")
+    public ResponseData<?> updateFood(@Valid @RequestBody FoodUpdateRequest request) {
+        log.info("Request update food {}", request.toString());
+        foodService.update(request);
+        return new ResponseData<>(HttpStatus.OK.value(), "Update food success", null);
+    }
+    
+    //delete food
+    @Operation(summary = "Delete food by id")
+    @DeleteMapping("/{id}")
+    public ResponseData<?> deleteFood(@PathVariable @Min(value = 1, message = "foodId must be equals or greater than 1") Long id) {
+        log.info("Request delete food with id: {}", id);
+        foodService.delete(id);
+        return new ResponseData<>(HttpStatus.OK.value(), "Delete food success", null);
+    }
 }
