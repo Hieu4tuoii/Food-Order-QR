@@ -1,4 +1,4 @@
-package vn.hieu4tuoi.model;
+package vn.hieu4tuoi.common;
 
 public enum PaymentMethod {
     CASH,

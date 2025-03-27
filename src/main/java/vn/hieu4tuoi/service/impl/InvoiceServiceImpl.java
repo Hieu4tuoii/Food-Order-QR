@@ -2,26 +2,21 @@ package vn.hieu4tuoi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import vn.hieu4tuoi.dto.request.invoice.InvoiceCreationRequest;
-import vn.hieu4tuoi.dto.request.invoice.InvoiceUpdateRequest;
-import vn.hieu4tuoi.dto.respone.PageResponse;
+import vn.hieu4tuoi.dto.request.invoice.PaymentMethodChangeRequest;
+import vn.hieu4tuoi.dto.request.invoice.PaymentStatusChangeRequest;
 import vn.hieu4tuoi.dto.respone.invoice.InvoiceResponse;
 import vn.hieu4tuoi.exception.ResourceNotFoundException;
 import vn.hieu4tuoi.model.Customer;
+import vn.hieu4tuoi.model.DiningTable;
 import vn.hieu4tuoi.model.Invoice;
 import vn.hieu4tuoi.repository.CustomerRepository;
+import vn.hieu4tuoi.repository.DiningTableRepository;
 import vn.hieu4tuoi.repository.InvoiceRepository;
 import vn.hieu4tuoi.service.InvoiceService;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +25,7 @@ import java.util.stream.Collectors;
 public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final CustomerRepository customerRepository;
+    private final DiningTableRepository diningTableRepository;
 
 
     @Override
@@ -46,6 +42,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .customerName(invoice.getCustomer().getName())
                 .createdAt(invoice.getCreatedAt())
                 .updatedAt(invoice.getUpdatedAt())
+                .dinningTableName(invoice.getDiningTable().getName())
                 .build();
     }
 
@@ -54,9 +51,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         log.info("Creating new invoice for customer id: {}", request.getCustomerId());
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        DiningTable dinningTable = diningTableRepository.findById(request.getDiningTableId())
+                .orElseThrow(() -> new ResourceNotFoundException("Dining table not found"));
                 
         Invoice invoice = Invoice.builder()
                 .customer(customer)
+                .diningTable(dinningTable)
                 .build();
                 
         invoiceRepository.save(invoice);
@@ -64,16 +64,27 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void update(InvoiceUpdateRequest request) {
-        log.info("Updating invoice with id: {}", request.getId());
+    public void changePaymentMethod(PaymentMethodChangeRequest request) {
+        log.info("change invoice method with id: {}", request.getId());
         Invoice invoice = invoiceRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
-        
-        invoice.setPaymentStatus(request.getPaymentStatus());
         invoice.setPaymentMethod(request.getPaymentMethod());
-        
+
+        log.info("change invoice method with id: {}", request.getId());
         invoiceRepository.save(invoice);
     }
+
+    @Override
+    public void changePaymentStatus(PaymentStatusChangeRequest request) {
+        log.info("change invoice status with id: {}", request.getId());
+        Invoice invoice = invoiceRepository.findById(request.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
+        invoice.setPaymentStatus(request.getPaymentStatus());
+
+        log.info("change invoice status with id: {}", request.getId());
+        invoiceRepository.save(invoice);
+    }
+
 
     @Override
     public void delete(Long invoiceId) {
@@ -89,9 +100,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         log.info("Getting invoices for customer id: {}", customerId);
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-                
         List<Invoice> invoices = invoiceRepository.findByCustomerId(customerId);
-        
         return invoices.stream()
                 .map(invoice -> InvoiceResponse.builder()
                         .id(invoice.getId())
@@ -99,6 +108,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         .paymentMethod(invoice.getPaymentMethod())
                         .customerId(invoice.getCustomer().getId())
                         .customerName(invoice.getCustomer().getName())
+                        .dinningTableName(invoice.getDiningTable().getName())
                         .createdAt(invoice.getCreatedAt())
                         .updatedAt(invoice.getUpdatedAt())
                         .build())

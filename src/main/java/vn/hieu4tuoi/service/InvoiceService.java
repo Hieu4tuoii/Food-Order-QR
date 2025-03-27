@@ -1,8 +1,8 @@
 package vn.hieu4tuoi.service;
 
 import vn.hieu4tuoi.dto.request.invoice.InvoiceCreationRequest;
-import vn.hieu4tuoi.dto.request.invoice.InvoiceUpdateRequest;
-import vn.hieu4tuoi.dto.respone.PageResponse;
+import vn.hieu4tuoi.dto.request.invoice.PaymentMethodChangeRequest;
+import vn.hieu4tuoi.dto.request.invoice.PaymentStatusChangeRequest;
 import vn.hieu4tuoi.dto.respone.invoice.InvoiceResponse;
 
 import java.util.List;
@@ -13,7 +13,9 @@ public interface InvoiceService {
     
     Long save(InvoiceCreationRequest request);
     
-    void update(InvoiceUpdateRequest request);
+//    void update(PaymentMethodChangeRequest request);
+    void changePaymentMethod(PaymentMethodChangeRequest request);
+    void changePaymentStatus(PaymentStatusChangeRequest request);
     
     void delete(Long invoiceId);
     
