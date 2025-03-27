@@ -20,7 +20,7 @@ public class FoodUpdateRequest {
     
     @NotNull(message = "price must not be null")
     @Min(value = 0, message = "price must be equals or greater than 0")
-    private Long price;
+    private Double price;
     
     private String imageUrl;
     

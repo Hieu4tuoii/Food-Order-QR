@@ -28,7 +28,7 @@ public class DiningTableServiceImpl implements DiningTableService {
     private final DiningTableRepository diningTableRepository;
 
     @Override
-    public PageResponse getDiningTableList(String keyword, String sort, int page, int size) {
+    public PageResponse<List<DiningTableResponse>> getDiningTableList(String keyword, String sort, int page, int size) {
         log.info("Getting dining tables by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createdAt");
         if(StringUtils.hasLength(sort)){
@@ -63,7 +63,7 @@ public class DiningTableServiceImpl implements DiningTableService {
                 .collect(Collectors.toList());
 
         log.info("Got dining tables by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
-        return PageResponse.builder()
+        return PageResponse.<List<DiningTableResponse>>builder()
                 .pageNo(page + 1)
                 .pageSize(size)
                 .totalPage(tablePage.getTotalPages())

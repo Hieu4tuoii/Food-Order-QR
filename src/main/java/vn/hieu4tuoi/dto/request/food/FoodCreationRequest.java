@@ -12,7 +12,7 @@ import vn.hieu4tuoi.model.Category;
 public class FoodCreationRequest {
     private String name;
     private String imageUrl;
-    private Long price;
+    private Double price;
     private String description;
     private Long categoryId;
 }

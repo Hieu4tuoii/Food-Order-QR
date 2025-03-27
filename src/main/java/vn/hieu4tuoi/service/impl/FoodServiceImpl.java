@@ -30,7 +30,7 @@ public class FoodServiceImpl implements FoodService {
     private final FoodRepository foodRepository;
     private final CategoryRepository categoryRepository;
     @Override
-    public PageResponse getFoodList(String keyword, String sort, int page, int size) {
+    public PageResponse<List<FoodResponse>> getFoodList(String keyword, String sort, int page, int size) {
         log.info("Getting comment by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createdAt");//mac dinh sap xep theo thoi gian cap nhat giam dan
         if(StringUtils.hasLength(sort)){
@@ -69,7 +69,7 @@ public class FoodServiceImpl implements FoodService {
                 .collect(java.util.stream.Collectors.toList());
 
         log.info("Got food by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
-        return PageResponse.builder()
+        return PageResponse.<List<FoodResponse>>builder()
                 .pageNo(page + 1)
                 .pageSize(size)
                 .totalPage(foodPage.getTotalPages())
@@ -78,7 +78,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    public PageResponse getFoodListByCategoryId(String categoryId, String keyword, String sort, int page, int size) {
+    public PageResponse<List<FoodResponse>> getFoodListByCategoryId(String categoryId, String keyword, String sort, int page, int size) {
         log.info("Getting food by categoryId {} keyword {} sort: {}, page: {}, size: {}", categoryId, keyword, sort, page, size);
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createdAt");//mac dinh sap xep theo thoi gian cap nhat giam dan
         if (StringUtils.hasLength(sort)) {
@@ -117,7 +117,7 @@ public class FoodServiceImpl implements FoodService {
                 .collect(java.util.stream.Collectors.toList());
 
         log.info("Got food by categoryId {} keyword {} sort: {}, page: {}, size: {}", categoryId,  keyword, sort, page, size);
-        return PageResponse.builder()
+        return PageResponse.<List<FoodResponse>>builder()
                 .pageNo(page + 1)
                 .pageSize(size)
                 .totalPage(foodPage.getTotalPages())

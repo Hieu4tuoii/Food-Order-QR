@@ -3,14 +3,13 @@ package vn.hieu4tuoi.service;
 import vn.hieu4tuoi.dto.request.invoice.InvoiceCreationRequest;
 import vn.hieu4tuoi.dto.request.invoice.InvoiceUpdateRequest;
 import vn.hieu4tuoi.dto.respone.PageResponse;
-import vn.hieu4tuoi.dto.respone.invoice.InvoiceDetailResponse;
+import vn.hieu4tuoi.dto.respone.invoice.InvoiceResponse;
 
 import java.util.List;
 
 public interface InvoiceService {
-    PageResponse getInvoiceList(String keyword, String sort, int page, int size);
-    
-    InvoiceDetailResponse getById(Long invoiceId);
+
+    InvoiceResponse getById(Long invoiceId);
     
     Long save(InvoiceCreationRequest request);
     
@@ -18,5 +17,5 @@ public interface InvoiceService {
     
     void delete(Long invoiceId);
     
-    List<InvoiceDetailResponse> getInvoicesByCustomerId(Long customerId);
+    List<InvoiceResponse> getInvoicesByCustomerId(Long customerId);
 }

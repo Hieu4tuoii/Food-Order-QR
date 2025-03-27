@@ -11,7 +11,6 @@ import org.springframework.util.StringUtils;
 import vn.hieu4tuoi.dto.request.customer.CustomerCreationRequest;
 import vn.hieu4tuoi.dto.request.customer.CustomerUpdateRequest;
 import vn.hieu4tuoi.dto.respone.PageResponse;
-import vn.hieu4tuoi.dto.respone.customer.CustomerDetailResponse;
 import vn.hieu4tuoi.dto.respone.customer.CustomerResponse;
 import vn.hieu4tuoi.exception.ResourceNotFoundException;
 import vn.hieu4tuoi.model.Customer;
@@ -30,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
 
     @Override
-    public PageResponse getCustomerList(String keyword, String sort, int page, int size) {
+    public PageResponse<List<CustomerResponse>> getCustomerList(String keyword, String sort, int page, int size) {
         log.info("Getting customers by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createdAt");
         if(StringUtils.hasLength(sort)){
@@ -66,7 +65,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .collect(Collectors.toList());
 
         log.info("Got customers by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
-        return PageResponse.builder()
+        return PageResponse.<List<CustomerResponse>>builder()
                 .pageNo(page + 1)
                 .pageSize(size)
                 .totalPage(customerPage.getTotalPages())
@@ -75,12 +74,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDetailResponse getById(Long customerId) {
+    public CustomerResponse getById(Long customerId) {
         log.info("Getting customer by id {}", customerId);
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
                 
-        return CustomerDetailResponse.builder()
+        return CustomerResponse.builder()
                 .id(customer.getId())
                 .name(customer.getName())
                 .build();

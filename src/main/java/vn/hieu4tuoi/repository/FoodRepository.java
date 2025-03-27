@@ -18,4 +18,6 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
 
     @Query(value = "select f from Food f where f.category.id = :categoryId")
     Page<Food> searchByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+
+    // Additional query methods can be added here if needed
 }

@@ -9,5 +9,5 @@ public class FoodResponse {
     private Long id;
     private String name;
     private String imageUrl;
-    private Long price;
+    private Double price;
 }

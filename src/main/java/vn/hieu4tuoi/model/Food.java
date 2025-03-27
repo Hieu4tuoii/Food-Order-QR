@@ -10,11 +10,12 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Food extends AbstractEntity<Long>{
+public class Food extends AbstractEntity<Long> {
     private String name;
-    private String imageUrl;
-    private Long price;
     private String description;
+    private Double price;
+    // Add other food properties as needed
+    private String imageUrl;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
