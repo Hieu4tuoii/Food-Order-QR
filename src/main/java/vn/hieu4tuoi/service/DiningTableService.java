@@ -7,7 +7,7 @@ import vn.hieu4tuoi.dto.respone.diningtable.DiningTableResponse;
 import java.util.List;
 
 public interface DiningTableService {
-    PageResponse<List<DiningTableResponse>> getDiningTableList(String keyword, String sort, int page, int size);
+    public List<DiningTableResponse> getDiningTableList(String keyword) ;
     DiningTableResponse getById(Long id);
     Long save(DiningTableRequest request);
     void update(Long id, DiningTableRequest request);

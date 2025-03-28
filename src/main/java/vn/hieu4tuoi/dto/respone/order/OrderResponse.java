@@ -1,7 +1,5 @@
 package vn.hieu4tuoi.dto.respone.order;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +17,7 @@ public class OrderResponse {
 
     private Long id;
 
-    private OrderStatus orderStatus;
+    private OrderStatus status;
 
     private List<OrderDetailResponse> orderDetail;
 

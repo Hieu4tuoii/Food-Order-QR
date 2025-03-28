@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.hieu4tuoi.common.OrderStatus;
 import vn.hieu4tuoi.dto.respone.food.FoodResponse;
 
 @Data
@@ -18,6 +19,8 @@ public class OrderDetailResponse {
     private Double priceAtOrder;
 
     private Integer quantity;
+
+    private OrderStatus status;
 
     private FoodResponse food;
 }

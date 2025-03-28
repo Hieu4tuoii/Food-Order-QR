@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import vn.hieu4tuoi.common.TableStatus;
 import vn.hieu4tuoi.dto.request.diningtable.DiningTableRequest;
 import vn.hieu4tuoi.dto.respone.PageResponse;
 import vn.hieu4tuoi.dto.respone.diningtable.DiningTableResponse;
@@ -28,47 +29,26 @@ public class DiningTableServiceImpl implements DiningTableService {
     private final DiningTableRepository diningTableRepository;
 
     @Override
-    public PageResponse<List<DiningTableResponse>> getDiningTableList(String keyword, String sort, int page, int size) {
-        log.info("Getting dining tables by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
-        Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createdAt");
-        if(StringUtils.hasLength(sort)){
-            Pattern pattern = Pattern.compile("(\\w+?)(:)(.*)");
-            Matcher matcher = pattern.matcher(sort);
-            if(matcher.find()){
-                String columnName = matcher.group(1);
-                order = matcher.group(3).equalsIgnoreCase("asc")
-                        ? new Sort.Order(Sort.Direction.ASC, columnName)
-                        : new Sort.Order(Sort.Direction.DESC, columnName);
-            }
-        }
-
-        if (page > 0) {
-            page = page - 1;
-        }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(order));
-        Page<DiningTable> tablePage;
+    public List<DiningTableResponse> getDiningTableList(String keyword) {
+        log.info("Getting dining tables by keyword {}", keyword);
+        List<DiningTable> tableList;
         if(StringUtils.hasLength(keyword)){
             keyword = "%" + keyword.toLowerCase() + "%";
-            tablePage = diningTableRepository.searchByKeyword(keyword, pageable);
+            tableList = diningTableRepository.searchByKeyword(keyword);
         }else{
-            tablePage = diningTableRepository.findAll(pageable);
+            tableList = diningTableRepository.findAll();
         }
-        
-        List<DiningTableResponse> tableResponses = tablePage.getContent().stream()
+
+        List<DiningTableResponse> tableResponses = tableList.stream()
                 .map(table -> DiningTableResponse.builder()
                         .id(table.getId())
                         .name(table.getName())
+                        .status(table.getTableStatus())
                         .build())
                 .collect(Collectors.toList());
 
-        log.info("Got dining tables by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
-        return PageResponse.<List<DiningTableResponse>>builder()
-                .pageNo(page + 1)
-                .pageSize(size)
-                .totalPage(tablePage.getTotalPages())
-                .items(tableResponses)
-                .build();
+        log.info("Got dining tables by keyword {} ", keyword);
+        return tableResponses;
     }
 
     @Override
@@ -112,4 +92,5 @@ public class DiningTableServiceImpl implements DiningTableService {
                 
         diningTableRepository.delete(diningTable);
     }
+
 }

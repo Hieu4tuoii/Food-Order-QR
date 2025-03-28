@@ -29,13 +29,10 @@ public class DiningTableController {
     @Operation(summary = "Get dining table list with filtering and pagination",
             description = "keyword: search term (optional), sort: sorting criteria like 'name:asc' (optional), page (default 1), size (default 10)")
     @GetMapping("/")
-    public ResponseData<PageResponse<List<DiningTableResponse>>> getDiningTableList(@RequestParam(value = "keyword", required = false) String keyword,
-                                                                                    @RequestParam(value = "page", defaultValue = "1") int page,
-                                                                                    @RequestParam(value = "size", defaultValue = "10") int size,
-                                                                                    @RequestParam(value = "sort", required = false) String sort) {
-        log.info("Getting dining table list by keyword {}, sort: {}, page: {}, size: {}", keyword, sort, page, size);
+    public ResponseData<List<DiningTableResponse>> getDiningTableList(@RequestParam(value = "keyword", required = false) String keyword) {
+        log.info("Getting dining table list by keyword {}", keyword);
         return new ResponseData<>(HttpStatus.OK.value(), "Get dining table list successfully", 
-                diningTableService.getDiningTableList(keyword, sort, page, size));
+                diningTableService.getDiningTableList(keyword));
     }
 
     @Operation(summary = "Find dining table by id")

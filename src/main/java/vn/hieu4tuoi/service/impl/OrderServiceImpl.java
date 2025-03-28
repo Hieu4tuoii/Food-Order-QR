@@ -79,12 +79,13 @@ public class OrderServiceImpl implements OrderService {
             log.info("Get order list by dining table id {} successfully", diningTableId);
             return orders.stream().map(order -> OrderResponse.builder()
                     .id(order.getId())
-                    .orderStatus(order.getStatus())
+                    .status(order.getStatus())
                     .orderDetail(order.getOrderDetails().stream().map(orderDetail ->
                                     OrderDetailResponse.builder()
                                             .id(orderDetail.getId())
                                             .priceAtOrder(orderDetail.getPriceAtOrder())
                                             .quantity(orderDetail.getQuantity())
+                                            .status(orderDetail.getStatus())
                                             .food(FoodResponse.builder()
                                                     .id(orderDetail.getFood().getId())
                                                     .imageUrl(orderDetail.getFood().getImageUrl())

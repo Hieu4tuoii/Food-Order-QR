@@ -8,8 +8,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.hieu4tuoi.model.DiningTable;
 
+import java.util.List;
+
 @Repository
 public interface DiningTableRepository extends JpaRepository<DiningTable, Long> {
     @Query("SELECT dt FROM DiningTable dt WHERE LOWER(dt.name) LIKE :keyword")
-    Page<DiningTable> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    List<DiningTable> searchByKeyword(@Param("keyword") String keyword);
 }
