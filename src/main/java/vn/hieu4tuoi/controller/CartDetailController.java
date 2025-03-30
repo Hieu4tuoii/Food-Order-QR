@@ -26,7 +26,7 @@ import java.util.List;
 public class CartDetailController {
     private final CartDetailService cartDetailService;
 
-    @Operation(summary = "Get cart details by customer id")
+    @Operation(summary = "Get cart details by customer id", description = "lấy ds giỏ hàng theo id khách hàng")
     @GetMapping("/customer/{customerId}")
     public ResponseData<List<CartDetailResponse>> getCartDetailsByCustomerId(@PathVariable @Min(value = 1, message = "customerId must be equals or greater than 1") Long customerId) {
         log.info("Getting cart details for customer id: {}", customerId);
@@ -54,7 +54,7 @@ public class CartDetailController {
         return new ResponseData<>(HttpStatus.OK.value(), "Update cart detail success", null);
     }
 
-    @Operation(summary = "Remove item from cart")
+    @Operation(summary = "Remove item from cart", description = "Xóa 1 chi tiet giỏ hàng")
     @DeleteMapping("/{id}")
     public ResponseData<Void> removeFromCart(@PathVariable @Min(value = 1, message = "cartDetailId must be equals or greater than 1") Long id) {
         log.info("Request remove from cart with id: {}", id);

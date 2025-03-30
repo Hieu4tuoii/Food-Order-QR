@@ -41,11 +41,14 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         DiningTable diningTable = diningTableRepository.findById(request.getDiningTableId())
                 .orElseThrow(() -> new ResourceNotFoundException("Dining table not found"));
-
         //lay hoa don gan nhat cua ban an
-        Invoice invoice = invoiceRepository.findFirstByDiningTableIdOrderByCreatedAtDesc(diningTable.getId());
+        Invoice invoice = invoiceRepository.findFirstByDiningTableIdOrderByCreatedAtDesc(request.getDiningTableId());
 
         Order order = new Order();
+
+        if(customer.getCartDetails().isEmpty()){
+            throw new ResourceNotFoundException("Cart is empty");
+        }
 
         //chuyen ds cartdetail sang orderdetail
         customer.getCartDetails().forEach( cartDetail -> {
@@ -65,10 +68,10 @@ public class OrderServiceImpl implements OrderService {
         }
 
         //save
+        diningTable.setStatus(TableStatus.ORDERING);
         invoiceRepository.save(invoice);
         customer.getCartDetails().clear();
         customerRepository.save(customer);
-        diningTable.setStatus(TableStatus.ORDERING);
         log.info(" Save order successfully with id: {}", order.getId());
         return order.getId();
     }

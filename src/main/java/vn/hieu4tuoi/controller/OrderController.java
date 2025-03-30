@@ -37,9 +37,10 @@ public class OrderController {
     public ResponseData<List<OrderResponse>> getOrderByDiningTableId(@PathVariable String diningTableId) {
          log.info("Request get order by dining table id {}", diningTableId);
          return new ResponseData<>(HttpStatus.OK.value(), "get order success", orderService.getOrderByDiningTableId(diningTableId));
-     }
+    }
 
-    @Operation(summary = "Thay đổi trạng thái orderDetail", description = "Thay đổi trạng thái cuar orderDetail")
+    @Operation(summary = "Thay đổi trạng thái orderDetail(admin)", description = "1 Đơn hàng có nhiều món ăn, moi món ăn tương tương 1 orderDetail, khi nhân viên cbi xong món nào thì cập nhat trạng thái cho orderDetail đó" +
+            "orderStatus gồm PENDING, DELIVERED, CANCELLED")
     @PatchMapping("/orderDetail/changeStatus")
     public ResponseData<Void> changeOrderDetailStatus(@Valid @RequestBody OrderChangeStatusRequest request) {
         log.info("Request change order detail status {}", request.toString());
@@ -48,12 +49,12 @@ public class OrderController {
     }
 
     //Thay đổi trạng thái order
-    @Operation(summary = "Thay đổi trạng thái order", description = "Thay đổi trạng thái của order")
+    @Operation(summary = "Thay đổi trạng thái order(admin)", description = "Thay đổi trạng thái của cả đơn hàng," +
+            "orderStatus gồm PENDING, DELIVERED, CANCELLED")
     @PatchMapping("/changeStatus")
     public ResponseData<Void> changeOrderStatus(@Valid @RequestBody OrderChangeStatusRequest request) {
         log.info("Request change order status {}", request.toString());
         orderService.changeOrderStatus(request);
         return new ResponseData<>(HttpStatus.ACCEPTED.value(), "change order status success", null);
     }
-
 }

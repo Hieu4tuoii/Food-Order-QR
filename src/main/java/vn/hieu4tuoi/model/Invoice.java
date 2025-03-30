@@ -65,8 +65,6 @@ public class Invoice {
             String currentTimeString = String.valueOf(currentTimeMillis);
             String last10Digits = currentTimeString.substring(currentTimeString.length() - 10);
             this.id = (1000 + new java.util.Random().nextInt(9000) + last10Digits);
-            //gan id cho dining table
-            this.diningTable.setId(this.id);
         }
     }
 

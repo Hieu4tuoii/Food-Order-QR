@@ -35,17 +35,17 @@ public class DiningTableController {
                 diningTableService.getDiningTableList(keyword));
     }
 
-    @Operation(summary = "Find dining table by id")
-    @GetMapping("/{id}")
-    public ResponseData<DiningTableResponse> getDiningTableById(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id) {
-        log.info("Getting dining table by id: {}", id);
-        DiningTableResponse response = diningTableService.getById(id);
-        return ResponseData.<DiningTableResponse>builder()
-                .status(HttpStatus.OK.value())
-                .message("Get dining table successfully")
-                .data(response)
-                .build();
-    }
+//    @Operation(summary = "Find dining table by id")
+//    @GetMapping("/{id}")
+//    public ResponseData<DiningTableResponse> getDiningTableById(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id) {
+//        log.info("Getting dining table by id: {}", id);
+//        DiningTableResponse response = diningTableService.getById(id);
+//        return ResponseData.<DiningTableResponse>builder()
+//                .status(HttpStatus.OK.value())
+//                .message("Get dining table successfully")
+//                .data(response)
+//                .build();
+//    }
 
     @Operation(summary = "Create new dining table")
     @PostMapping("/")
@@ -55,20 +55,20 @@ public class DiningTableController {
         return new ResponseData<>(HttpStatus.CREATED.value(), "Create dining table successfully", tableId);
     }
 
-    @Operation(summary = "Update dining table")
-    @PutMapping("/{id}")
-    public ResponseData<Void> updateDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id,
-                                             @Valid @RequestBody DiningTableRequest request) {
-        log.info("Updating dining table id: {} with request: {}", id, request);
-        diningTableService.update(id, request);
-        return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Update dining table successfully", null);
-    }
-
-    @Operation(summary = "Delete dining table")
-    @DeleteMapping("/{id}")
-    public ResponseData<Void> deleteDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id) {
-        log.info("Deleting dining table id: {}", id);
-        diningTableService.delete(id);
-        return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Delete dining table successfully", null);
-    }
+//    @Operation(summary = "Update dining table")
+//    @PutMapping("/{id}")
+//    public ResponseData<Void> updateDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id,
+//                                             @Valid @RequestBody DiningTableRequest request) {
+//        log.info("Updating dining table id: {} with request: {}", id, request);
+//        diningTableService.update(id, request);
+//        return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Update dining table successfully", null);
+//    }
+//
+//    @Operation(summary = "Delete dining table")
+//    @DeleteMapping("/{id}")
+//    public ResponseData<Void> deleteDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id) {
+//        log.info("Deleting dining table id: {}", id);
+//        diningTableService.delete(id);
+//        return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Delete dining table successfully", null);
+//    }
 }

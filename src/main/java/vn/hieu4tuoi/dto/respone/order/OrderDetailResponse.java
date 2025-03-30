@@ -1,15 +1,13 @@
 package vn.hieu4tuoi.dto.respone.order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.hieu4tuoi.common.OrderStatus;
 import vn.hieu4tuoi.dto.respone.food.BaseFoodResponse;
 import vn.hieu4tuoi.dto.respone.food.FoodResponse;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

@@ -37,7 +37,7 @@ public class InvoiceController {
 //                .build();
 //    }
 
-    @Operation(summary = "Get invoices by customer id", description = "Lấy danh sách hóa đơn theo id khách hàng")
+    @Operation(summary = "Get invoices list by customer id", description = "Lấy danh sách hóa đơn theo id khách hàng")
     @GetMapping("/customer/{customerId}")
     public ResponseData<List<InvoiceResponse>> getInvoicesByCustomerId(@PathVariable @Min(value = 1, message = "customerId must be equals or greater than 1") Long customerId) {
         log.info("Getting invoices for customer id: {}", customerId);

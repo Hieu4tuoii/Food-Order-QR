@@ -28,7 +28,8 @@ import java.util.List;
 @Validated
 public class FoodController {
     private final FoodService foodService;
-    @Operation(summary = "Find food detail by id")
+    @Operation(summary = "Find food detail by id, " +
+            "foodStatus gồm: AVAILABLE, UNAVAILABLE")
     @GetMapping("/{id}")
     public ResponseData<FoodDetailResponse> getFoodDetail(@PathVariable @Min(value = 1, message = "userId must be equals or gretter than 1") Long id) {
         log.info("Getting food detail by id: {}", id);
@@ -51,7 +52,8 @@ public class FoodController {
 
     //get ds food
     @Operation(summary = "get food list by keyword, sort (vd: price:asc), page, size",
-            description = "keyword: tu khoa tim kiem (ko bắt buoc), sort: sap xep theo cot nao va chieu tang dan hoac giam dan(ko bat buoc), page (mac dinh trang 1), size: (mac dinh 10"
+            description = "keyword: tu khoa tim kiem (ko bắt buoc), sort: sap xep theo cot nao va chieu tang dan hoac giam dan(ko bat buoc), page (mac dinh trang 1), size: (mac dinh 10" +
+                    "\"foodStatus gồm: AVAILABLE, UNAVAILABLE"
     )
     @GetMapping("/")
     public ResponseData<PageResponse<List<FoodResponse>>> getFoodList(@RequestParam(value = "keyword", required = false) String keyword,
@@ -64,7 +66,8 @@ public class FoodController {
 
     //find by category id
     @Operation(summary = "get food list by category id, keyword, sort (vd: price:asc), page, size",
-            description = "keyword: tu khoa tim kiem (ko bắt buoc), sort: sap xep theo cot nao va chieu tang dan hoac giam dan(ko bat buoc), page (mac dinh trang 1), size: (mac dinh 10"
+            description = "keyword: tu khoa tim kiem (ko bắt buoc), sort: sap xep theo cot nao va chieu tang dan hoac giam dan(ko bat buoc), page (mac dinh trang 1), size: (mac dinh 10 " +
+                    "\nfoodStatus gồm: AVAILABLE, UNAVAILABLE"
     )
     @GetMapping("/category/{categoryId}")
     public ResponseData<PageResponse<List<FoodResponse>>> getFoodListByCategoryId(@PathVariable String categoryId,
