@@ -14,5 +14,5 @@ import vn.hieu4tuoi.common.TableStatus;
 public class DiningTable extends AbstractEntity<Long> {
     private String name;
     @Enumerated(EnumType.STRING)
-    private TableStatus tableStatus = TableStatus.EMPTY; // mac dinh la co san
+    private TableStatus status = TableStatus.EMPTY; // mac dinh la co san
 }

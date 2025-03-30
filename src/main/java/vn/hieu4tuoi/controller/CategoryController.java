@@ -23,7 +23,7 @@ import java.util.List;
 @Validated
 public class CategoryController {
     private final CategoryService categoryService;
-    @Operation(method = "POST", summary = "Add new user", description = "Send a request via this API to create new user")
+    @Operation(method = "POST", summary = "Add new category", description = "Send a request via this API to create new user")
     @PostMapping("/")
     public ResponseData<Long> saveCategory(@Valid @RequestBody CategoryCreationRequest request) {
         log.info("Request save category {}", request.toString());

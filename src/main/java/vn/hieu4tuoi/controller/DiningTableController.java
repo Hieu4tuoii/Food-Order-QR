@@ -26,7 +26,7 @@ import java.util.List;
 public class DiningTableController {
     private final DiningTableService diningTableService;
 
-    @Operation(summary = "Get dining table list with filtering and pagination",
+    @Operation(summary = "Get dining table list",
             description = "keyword: search term (optional), sort: sorting criteria like 'name:asc' (optional), page (default 1), size (default 10)")
     @GetMapping("/")
     public ResponseData<List<DiningTableResponse>> getDiningTableList(@RequestParam(value = "keyword", required = false) String keyword) {

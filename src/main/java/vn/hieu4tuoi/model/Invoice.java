@@ -21,7 +21,7 @@ public class Invoice extends AbstractEntity<Long> {
     private PaymentStatus paymentStatus = PaymentStatus.UNPAID;
     
     @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+    private PaymentMethod paymentMethod = PaymentMethod.CASH;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Order> orderList = new ArrayList<>();

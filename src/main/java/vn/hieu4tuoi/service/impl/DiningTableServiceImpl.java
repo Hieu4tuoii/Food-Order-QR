@@ -43,7 +43,8 @@ public class DiningTableServiceImpl implements DiningTableService {
                 .map(table -> DiningTableResponse.builder()
                         .id(table.getId())
                         .name(table.getName())
-                        .status(table.getTableStatus())
+                        .status(table.getStatus())
+                        .status(table.getStatus())
                         .build())
                 .collect(Collectors.toList());
 

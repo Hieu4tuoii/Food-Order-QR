@@ -4,8 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.hieu4tuoi.common.OrderStatus;
 import vn.hieu4tuoi.common.PaymentStatus;
+import vn.hieu4tuoi.common.TableStatus;
+import vn.hieu4tuoi.dto.request.order.OrderChangeStatusRequest;
 import vn.hieu4tuoi.dto.request.order.OrderRequest;
+import vn.hieu4tuoi.dto.respone.food.BaseFoodResponse;
 import vn.hieu4tuoi.dto.respone.food.FoodResponse;
 import vn.hieu4tuoi.dto.respone.order.OrderDetailResponse;
 import vn.hieu4tuoi.dto.respone.order.OrderResponse;
@@ -24,6 +28,8 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerRepository customerRepository;
     private final DiningTableRepository diningTableRepository;
     private final InvoiceRepository invoiceRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final OrderRepository orderRepository;
 
     //transaction neu co loi xay ra
     @Transactional
@@ -61,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
         invoiceRepository.save(invoice);
         customer.getCartDetails().clear();
         customerRepository.save(customer);
+        diningTable.setStatus(TableStatus.ORDERING);
         log.info(" Save order successfully with id: {}", order.getId());
         return order.getId();
     }
@@ -69,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponse> getOrderByDiningTableId(Long diningTableId) {
         log.info("Request get order by dining table id {}", diningTableId);
         Invoice invoiceFirstInTable = invoiceRepository.findFirstByDiningTableIdOrderByCreatedAtDesc(diningTableId);
-        //neu hoa don khong ton tai hoac da thanh toan thi tra ve null
+        //neu hoa don khong ton tai hoac da thanh toan thi tra ve rỗng
         if(invoiceFirstInTable == null || invoiceFirstInTable.getPaymentStatus() == PaymentStatus.PAID){
             return new ArrayList<>();
         }
@@ -83,22 +90,72 @@ public class OrderServiceImpl implements OrderService {
                     .orderDetail(order.getOrderDetails().stream().map(orderDetail ->
                                     OrderDetailResponse.builder()
                                             .id(orderDetail.getId())
-                                            .priceAtOrder(orderDetail.getPriceAtOrder())
                                             .quantity(orderDetail.getQuantity())
                                             .status(orderDetail.getStatus())
+                                            .totalPrice(orderDetail.getStatus().equals(OrderStatus.CANCELLED)?0:orderDetail.getPriceAtOrder() * orderDetail.getQuantity())
                                             .food(FoodResponse.builder()
                                                     .id(orderDetail.getFood().getId())
                                                     .imageUrl(orderDetail.getFood().getImageUrl())
                                                     .name(orderDetail.getFood().getName())
-                                                    .price(orderDetail.getFood().getPrice())
+                                                    .price(orderDetail.getPriceAtOrder())
                                                     .build())
                                             .build()).toList()
                             )
+                    .totalPrice(order.getOrderDetails().stream().mapToDouble(orderDetail -> (orderDetail.getStatus().equals(OrderStatus.CANCELLED))?0:orderDetail.getPriceAtOrder() * orderDetail.getQuantity()).sum())
                     .updatedAt(order.getUpdatedAt())
                     .createdAt(order.getCreatedAt())
                     .build()).toList();
         }
     }
+
+    //change order detail status
+    @Transactional
+    @Override
+    public void changeOrderDetailStatus(OrderChangeStatusRequest request) {
+        log.info("Request change order detail status {} to {}", request.getId(), request.getStatus());
+        OrderDetail orderDetail = orderDetailRepository.findById(request.getId()).orElseThrow(
+                () -> new ResourceNotFoundException("Order detail not found"));
+        //check status
+        orderDetail.setStatus(request.getStatus());
+
+        //get order
+        Order order = orderDetail.getOrder();
+        //nếu tất cả các order detail koong con dang cho thi set trang thai cho order
+        boolean checkOrderDetail = true;
+        for (OrderDetail detail : order.getOrderDetails()) {
+            if (detail.getStatus() == OrderStatus.PENDING) {
+                checkOrderDetail = false;
+                break;
+            }
+        }
+        if(checkOrderDetail){
+            order.setStatus(OrderStatus.DELIVERED);
+        }
+
+        //save order and order detail
+        orderRepository.save(order);
+        log.info("Change order detail status successfully");
+    }
+
+    //change status of order
+    @Override
+    @Transactional
+    public void changeOrderStatus(OrderChangeStatusRequest request) {
+        log.info("Request change order status {} to {}", request.getId(), request.getStatus());
+        Order order = orderRepository.findById(request.getId()).orElseThrow(
+                () -> new ResourceNotFoundException("Order not found"));
+        //nếu orderdetail trong order còn đang chờ thì chuyển sang da giao
+        for(OrderDetail orderDetail : order.getOrderDetails()){
+            if(orderDetail.getStatus() == OrderStatus.PENDING){
+                orderDetail.setStatus(OrderStatus.DELIVERED);
+            }
+        }
+
+        //save order
+        orderRepository.save(order);
+        log.info("Change order status successfully");
+    }
+
     private OrderDetail cartDetailToOrderDetail(CartDetail cartDetail){
         return OrderDetail.builder()
                 .quantity(cartDetail.getQuantity())

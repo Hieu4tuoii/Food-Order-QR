@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.hieu4tuoi.common.OrderStatus;
+import vn.hieu4tuoi.dto.respone.food.BaseFoodResponse;
 import vn.hieu4tuoi.dto.respone.food.FoodResponse;
 
 @Data
@@ -13,14 +14,11 @@ import vn.hieu4tuoi.dto.respone.food.FoodResponse;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetailResponse {
-
     private Long id;
-
-    private Double priceAtOrder;
-
     private Integer quantity;
-
-    private OrderStatus status;
-
     private FoodResponse food;
+    private OrderStatus status;
+    private Double totalPrice;
+
+
 }

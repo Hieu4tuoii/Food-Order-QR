@@ -3,9 +3,11 @@ package vn.hieu4tuoi.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import vn.hieu4tuoi.common.OrderStatus;
 import vn.hieu4tuoi.dto.request.invoice.InvoiceCreationRequest;
-import vn.hieu4tuoi.dto.request.invoice.PaymentMethodChangeRequest;
 import vn.hieu4tuoi.dto.request.invoice.PaymentStatusChangeRequest;
+import vn.hieu4tuoi.dto.respone.customer.CustomerResponse;
+import vn.hieu4tuoi.dto.respone.invoice.InvoiceItemResponse;
 import vn.hieu4tuoi.dto.respone.invoice.InvoiceResponse;
 import vn.hieu4tuoi.exception.ResourceNotFoundException;
 import vn.hieu4tuoi.model.Customer;
@@ -33,13 +35,23 @@ public class InvoiceServiceImpl implements InvoiceService {
         log.info("Getting invoice by id {}", invoiceId);
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
+
+        //tính tổng số lượng cua mỗi món ăn
+
+        List<InvoiceItemResponse> invoiceItemResponseList = invoiceRepository.findInvoiceItemsByInvoiceId(invoiceId, OrderStatus.DELIVERED);
                 
         return InvoiceResponse.builder()
                 .id(invoice.getId())
                 .paymentStatus(invoice.getPaymentStatus())
                 .paymentMethod(invoice.getPaymentMethod())
-                .customerId(invoice.getCustomer().getId())
-                .customerName(invoice.getCustomer().getName())
+                .items(invoiceItemResponseList)
+                .customer(CustomerResponse.builder()
+                        .id(invoice.getCustomer().getId())
+                        .name(invoice.getCustomer().getName())
+                        .build())
+                .totalPrice(invoiceItemResponseList.stream()
+                        .mapToDouble(InvoiceItemResponse::getTotalPrice) // Lấy tổng giá trị
+                        .sum())
                 .createdAt(invoice.getCreatedAt())
                 .updatedAt(invoice.getUpdatedAt())
                 .dinningTableName(invoice.getDiningTable().getName())
@@ -106,8 +118,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                         .id(invoice.getId())
                         .paymentStatus(invoice.getPaymentStatus())
                         .paymentMethod(invoice.getPaymentMethod())
-                        .customerId(invoice.getCustomer().getId())
-                        .customerName(invoice.getCustomer().getName())
+                        .customer(CustomerResponse.builder()
+                                .id(invoice.getCustomer().getId())
+                                .name(invoice.getCustomer().getName())
+                                .build())
                         .dinningTableName(invoice.getDiningTable().getName())
                         .createdAt(invoice.getCreatedAt())
                         .updatedAt(invoice.getUpdatedAt())

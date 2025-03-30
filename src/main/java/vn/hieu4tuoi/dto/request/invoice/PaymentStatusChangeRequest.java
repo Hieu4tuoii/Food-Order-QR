@@ -17,4 +17,7 @@ public class PaymentStatusChangeRequest {
     @NotNull(message = "paymentStatus must not be null")
     private PaymentStatus paymentStatus;
 
+    @NotNull(message = "paymentMethod must not be null")
+    private PaymentMethod paymentMethod;
+
 }

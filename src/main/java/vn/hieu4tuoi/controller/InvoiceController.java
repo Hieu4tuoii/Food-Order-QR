@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import vn.hieu4tuoi.dto.request.invoice.InvoiceCreationRequest;
-import vn.hieu4tuoi.dto.request.invoice.PaymentMethodChangeRequest;
 import vn.hieu4tuoi.dto.request.invoice.PaymentStatusChangeRequest;
 import vn.hieu4tuoi.dto.respone.ResponseData;
 import vn.hieu4tuoi.dto.respone.invoice.InvoiceResponse;
@@ -27,17 +25,17 @@ import java.util.List;
 public class InvoiceController {
     private final InvoiceService invoiceService;
     
-    @Operation(summary = "Find invoice detail by id")
-    @GetMapping("/{id}")
-    public ResponseData<InvoiceResponse> getInvoiceDetail(@PathVariable @Min(value = 1, message = "invoiceId must be equals or greater than 1") Long id) {
-        log.info("Getting invoice detail by id: {}", id);
-        InvoiceResponse invoiceResponse = invoiceService.getById(id);
-        return ResponseData.<InvoiceResponse>builder()
-                .status(HttpStatus.OK.value())
-                .message("Get invoice detail successfully")
-                .data(invoiceResponse)
-                .build();
-    }
+//    @Operation(summary = "Find invoice detail by id")
+//    @GetMapping("/{id}")
+//    public ResponseData<InvoiceResponse> getInvoiceDetail(@PathVariable @Min(value = 1, message = "invoiceId must be equals or greater than 1") Long id) {
+//        log.info("Getting invoice detail by id: {}", id);
+//        InvoiceResponse invoiceResponse = invoiceService.getById(id);
+//        return ResponseData.<InvoiceResponse>builder()
+//                .status(HttpStatus.OK.value())
+//                .message("Get invoice detail successfully")
+//                .data(invoiceResponse)
+//                .build();
+//    }
 
     @Operation(summary = "Get invoices by customer id")
     @GetMapping("/customer/{customerId}")
@@ -51,13 +49,13 @@ public class InvoiceController {
                 .build();
     }
 
-    @Operation(summary = "Save invoice")
-    @PostMapping("/")
-    public ResponseData<Long> saveInvoice(@Valid @RequestBody InvoiceCreationRequest request) {
-        log.info("Request save invoice {}", request.toString());
-        Long invoiceId = invoiceService.save(request);
-        return new ResponseData<>(HttpStatus.CREATED.value(), "Save invoice success", invoiceId);
-    }
+//    @Operation(summary = "Save invoice")
+//    @PostMapping("/")
+//    public ResponseData<Long> saveInvoice(@Valid @RequestBody InvoiceCreationRequest request) {
+//        log.info("Request save invoice {}", request.toString());
+//        Long invoiceId = invoiceService.save(request);
+//        return new ResponseData<>(HttpStatus.CREATED.value(), "Save invoice success", invoiceId);
+//    }
 
 //    @Operation(summary = "Update invoice")
 //    @PutMapping("/")
@@ -67,13 +65,7 @@ public class InvoiceController {
 //        return new ResponseData<>(HttpStatus.OK.value(), "Update invoice success", null);
 //    }
 
-    @Operation(summary = "change invoice method")
-    @PatchMapping("/changeMethod")
-    public ResponseData<Void> changeInvoiceMethod(@Valid @RequestBody PaymentMethodChangeRequest request) {
-        log.info("Request change invoice method {}", request.toString());
-        invoiceService.changePaymentMethod(request);
-        return new ResponseData<>(HttpStatus.OK.value(), "change invoice method success", null);
-    }
+//
 
 
     @Operation(summary = "change invoice status")

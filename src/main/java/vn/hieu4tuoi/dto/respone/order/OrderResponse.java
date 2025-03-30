@@ -20,6 +20,7 @@ public class OrderResponse {
     private OrderStatus status;
 
     private List<OrderDetailResponse> orderDetail;
+    private Double totalPrice;
 
     private LocalDateTime updatedAt;
 
