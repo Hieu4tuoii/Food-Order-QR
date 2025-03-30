@@ -2,6 +2,7 @@ package vn.hieu4tuoi.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import vn.hieu4tuoi.common.FoodStatus;
 
 @Getter
 @Setter
@@ -14,8 +15,10 @@ public class Food extends AbstractEntity<Long> {
     private String name;
     private String description;
     private Double price;
-    // Add other food properties as needed
     private String imageUrl;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private FoodStatus status = FoodStatus.AVAILABLE; // mac dinh la con hang
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

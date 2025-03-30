@@ -21,4 +21,7 @@ public interface CartDetailRepository extends JpaRepository<CartDetail, Long> {
     
     @Query(value = "select cd from CartDetail cd where cd.customer.id = :customerId and cd.food.id = :foodId")
     CartDetail findByCustomerIdAndFoodId(@Param("customerId") Long customerId, @Param("foodId") Long foodId);
+
+    //xoa cartdetail theo foodid
+    void deleteByFoodId(Long foodId);
 }

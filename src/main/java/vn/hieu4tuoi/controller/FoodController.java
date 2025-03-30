@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.hieu4tuoi.dto.request.food.FoodCreationRequest;
+import vn.hieu4tuoi.dto.request.food.FoodStatusChangeRequest;
 import vn.hieu4tuoi.dto.request.food.FoodUpdateRequest;
 import vn.hieu4tuoi.dto.respone.PageResponse;
 import vn.hieu4tuoi.dto.respone.food.FoodDetailResponse;
@@ -81,15 +82,24 @@ public class FoodController {
     public ResponseData<?> updateFood(@Valid @RequestBody FoodUpdateRequest request) {
         log.info("Request update food {}", request.toString());
         foodService.update(request);
-        return new ResponseData<>(HttpStatus.OK.value(), "Update food success", null);
+        return new ResponseData<>(HttpStatus.NO_CONTENT.value(), "Update food success", null);
     }
     
-    //delete food
+   // delete food
     @Operation(summary = "Delete food by id")
     @DeleteMapping("/{id}")
     public ResponseData<Void> deleteFood(@PathVariable @Min(value = 1, message = "foodId must be equals or greater than 1") Long id) {
         log.info("Request delete food with id: {}", id);
         foodService.delete(id);
-        return new ResponseData<>(HttpStatus.OK.value(), "Delete food success", null);
+        return new ResponseData<>(HttpStatus.NO_CONTENT.value(), "Delete food success", null);
+    }
+
+    //change status food
+    @Operation(summary = "Change food status" ,description = "cập nhật trạng thái món ăn (AVAILABLE, UNAVAILABLE)")
+    @PatchMapping("/changeStatus")
+    public ResponseData<Void> changeFoodStatus(@Valid @RequestBody FoodStatusChangeRequest request) {
+        log.info("Request change food {}", request.toString());
+        foodService.changeStatus(request);
+        return new ResponseData<>(HttpStatus.NO_CONTENT.value(), "Change food status success", null);
     }
 }

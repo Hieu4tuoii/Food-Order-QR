@@ -6,8 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import vn.hieu4tuoi.common.FoodStatus;
 import vn.hieu4tuoi.dto.request.food.FoodCreationRequest;
+import vn.hieu4tuoi.dto.request.food.FoodStatusChangeRequest;
 import vn.hieu4tuoi.dto.request.food.FoodUpdateRequest;
 import vn.hieu4tuoi.dto.respone.food.FoodDetailResponse;
 import vn.hieu4tuoi.dto.respone.PageResponse;
@@ -15,6 +18,7 @@ import vn.hieu4tuoi.dto.respone.food.FoodResponse;
 import vn.hieu4tuoi.exception.ResourceNotFoundException;
 import vn.hieu4tuoi.model.Category;
 import vn.hieu4tuoi.model.Food;
+import vn.hieu4tuoi.repository.CartDetailRepository;
 import vn.hieu4tuoi.repository.CategoryRepository;
 import vn.hieu4tuoi.repository.FoodRepository;
 import vn.hieu4tuoi.service.FoodService;
@@ -29,6 +33,7 @@ import java.util.regex.Pattern;
 public class FoodServiceImpl implements FoodService {
     private final FoodRepository foodRepository;
     private final CategoryRepository categoryRepository;
+    private final CartDetailRepository cartDetailRepository;
     @Override
     public PageResponse<List<FoodResponse>> getFoodList(String keyword, String sort, int page, int size) {
         log.info("Getting comment by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
@@ -53,9 +58,9 @@ public class FoodServiceImpl implements FoodService {
         Page<Food> foodPage;
         if(StringUtils.hasLength(keyword)){
             keyword = "%" + keyword.toLowerCase() + "%";
-            foodPage = foodRepository.searchByKeyword(keyword, pageable);
+            foodPage = foodRepository.searchByKeyword(keyword, pageable, FoodStatus.getValidStatuses());
         }else{
-            foodPage = foodRepository.findAll(pageable);
+            foodPage = foodRepository.findAllByStatusIn( FoodStatus.getValidStatuses(), pageable);
         }
         List<Food> foodList = foodPage.getContent();
         //map sang foodResponse
@@ -65,6 +70,7 @@ public class FoodServiceImpl implements FoodService {
                         .name(food.getName())
                         .price(food.getPrice())
                         .imageUrl(food.getImageUrl())
+                        .status(food.getStatus())
                         .build())
                 .collect(java.util.stream.Collectors.toList());
 
@@ -100,9 +106,9 @@ public class FoodServiceImpl implements FoodService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(order));
         Page<Food> foodPage;
         if (StringUtils.hasLength(keyword)) {
-            foodPage = foodRepository.searchByKeywordAndCategoryId(Long.valueOf(categoryId), keyword, pageable);
+            foodPage = foodRepository.searchByKeywordAndCategoryId(Long.valueOf(categoryId), keyword, pageable, FoodStatus.getValidStatuses());
         } else {
-            foodPage = foodRepository.searchByCategoryId(Long.valueOf(categoryId), pageable);
+            foodPage = foodRepository.searchByCategoryId(Long.valueOf(categoryId), pageable, FoodStatus.getValidStatuses());
         }
 
         List<Food> foodList = foodPage.getContent();
@@ -113,6 +119,7 @@ public class FoodServiceImpl implements FoodService {
                         .name(food.getName())
                         .price(food.getPrice())
                         .imageUrl(food.getImageUrl())
+                        .status(food.getStatus())
                         .build())
                 .collect(java.util.stream.Collectors.toList());
 
@@ -128,13 +135,14 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public FoodDetailResponse getById(Long foodId) {
         log.info("Getting food by id {}", foodId);
-        Food food = foodRepository.findById(foodId).orElseThrow(() -> new ResourceNotFoundException("Food not found"));
+        Food food = foodRepository.findByIdAndStatusIn(foodId, FoodStatus.getValidStatuses()).orElseThrow(() -> new ResourceNotFoundException("Food not found"));
         return FoodDetailResponse.builder()
                 .id(food.getId())
                 .name(food.getName())
                 .description(food.getDescription())
                 .price(food.getPrice())
                 .imageUrl(food.getImageUrl())
+                .status(food.getStatus())
                 .build();
     }
 
@@ -158,9 +166,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public void update(FoodUpdateRequest request) {
         log.info("Updating food with id: {}", request.getId());
-        Food food = foodRepository.findById(request.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
-        
+        Food food = foodRepository.findByIdAndStatusIn(request.getId(), FoodStatus.getValidStatuses()).orElseThrow(() -> new ResourceNotFoundException("Food not found"));
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         
@@ -174,13 +180,34 @@ public class FoodServiceImpl implements FoodService {
         log.info("Food updated successfully: {}", food.getId());
     }
 
+    @Transactional
     @Override
     public void delete(Long foodId) {
         log.info("Deleting food with id: {}", foodId);
-        Food food = foodRepository.findById(foodId)
+        Food food = foodRepository.findByIdAndStatusIn(foodId, FoodStatus.getValidStatuses())
                 .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
-        
-        foodRepository.delete(food);
+
+        food.setStatus(FoodStatus.DELETED);
+        //delete food in cart
+        cartDetailRepository.deleteByFoodId(foodId);
+
+        foodRepository.save(food);
         log.info("Food deleted successfully: {}", foodId);
+    }
+
+    @Override
+    public void changeStatus(FoodStatusChangeRequest request) {
+        log.info("change food status with id: {}", request.getId());
+        Food food = foodRepository.findByIdAndStatusIn( request.getId(), FoodStatus.getValidStatuses())
+                .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
+
+        //check status có trong danh sách cho phép không
+        if (!FoodStatus.getValidStatuses().contains(request.getStatus())) {
+            throw new ResourceNotFoundException("Food status not found");
+        }
+
+        food.setStatus(request.getStatus());
+        foodRepository.save(food);
+        log.info("change food status successfully: {}", request.getId());
     }
 }

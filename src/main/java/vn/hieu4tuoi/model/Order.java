@@ -15,6 +15,7 @@ import java.util.List;
 public class Order extends AbstractEntity<Long> {
     
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private OrderStatus status = OrderStatus.PENDING; //mac dinh la dang cho
     
     @ManyToOne(fetch = FetchType.LAZY)

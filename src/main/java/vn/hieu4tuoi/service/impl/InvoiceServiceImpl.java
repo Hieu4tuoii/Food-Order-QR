@@ -3,7 +3,10 @@ package vn.hieu4tuoi.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.hieu4tuoi.common.OrderStatus;
+import vn.hieu4tuoi.common.PaymentStatus;
+import vn.hieu4tuoi.common.TableStatus;
 import vn.hieu4tuoi.dto.request.invoice.InvoiceCreationRequest;
 import vn.hieu4tuoi.dto.request.invoice.PaymentStatusChangeRequest;
 import vn.hieu4tuoi.dto.respone.customer.CustomerResponse;
@@ -31,7 +34,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     @Override
-    public InvoiceResponse getById(Long invoiceId) {
+    public InvoiceResponse getById(String invoiceId) {
         log.info("Getting invoice by id {}", invoiceId);
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
@@ -59,7 +62,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Long save(InvoiceCreationRequest request) {
+    public String save(InvoiceCreationRequest request) {
         log.info("Creating new invoice for customer id: {}", request.getCustomerId());
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
@@ -75,31 +78,37 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoice.getId();
     }
 
+//    @Override
+//    public void changePaymentMethod(PaymentMethodChangeRequest request) {
+//        log.info("change invoice method with id: {}", request.getId());
+//        Invoice invoice = invoiceRepository.findById(request.getId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
+//        invoice.setPaymentMethod(request.getPaymentMethod());
+//
+//        log.info("change invoice method with id: {}", request.getId());
+//        invoiceRepository.save(invoice);
+//    }
+
+    @Transactional
     @Override
-    public void changePaymentMethod(PaymentMethodChangeRequest request) {
-        log.info("change invoice method with id: {}", request.getId());
+    public void confirmPayment(PaymentStatusChangeRequest request) {
+        log.info("change invoice status with id: {} and paymentMethod {}", request.getId(), request.getPaymentMethod());
         Invoice invoice = invoiceRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
+        invoice.setPaymentStatus(PaymentStatus.PAID);
         invoice.setPaymentMethod(request.getPaymentMethod());
 
-        log.info("change invoice method with id: {}", request.getId());
-        invoiceRepository.save(invoice);
-    }
+        //update table status
+        DiningTable diningTable = invoice.getDiningTable();
+        diningTable.setStatus(TableStatus.EMPTY);
 
-    @Override
-    public void changePaymentStatus(PaymentStatusChangeRequest request) {
-        log.info("change invoice status with id: {}", request.getId());
-        Invoice invoice = invoiceRepository.findById(request.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
-        invoice.setPaymentStatus(request.getPaymentStatus());
-
-        log.info("change invoice status with id: {}", request.getId());
+        log.info("change invoice status with id: {} and paymentMethod {}", request.getId(), request.getPaymentMethod());
         invoiceRepository.save(invoice);
     }
 
 
     @Override
-    public void delete(Long invoiceId) {
+    public void delete(String invoiceId) {
         log.info("Deleting invoice with id: {}", invoiceId);
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));

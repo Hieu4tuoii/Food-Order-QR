@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface InvoiceService {
 
-    InvoiceResponse getById(Long invoiceId);
-    
-    Long save(InvoiceCreationRequest request);
+    InvoiceResponse getById(String invoiceId);
+
+    String save(InvoiceCreationRequest request);
     
 //    void update(PaymentMethodChangeRequest request);
-    void changePaymentMethod(PaymentMethodChangeRequest request);
-    void changePaymentStatus(PaymentStatusChangeRequest request);
+    //void changePaymentMethod(PaymentMethodChangeRequest request);
+    void confirmPayment(PaymentStatusChangeRequest request);
     
-    void delete(Long invoiceId);
+    void delete(String invoiceId);
     
     List<InvoiceResponse> getInvoicesByCustomerId(Long customerId);
 }

@@ -14,11 +14,11 @@ import vn.hieu4tuoi.model.Invoice;
 import java.util.List;
 
 @Repository
-public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
+public interface InvoiceRepository extends JpaRepository<Invoice, String> {
     @Query(value = "select i from Invoice i join fetch i.customer c where lower(c.name) like :keyword")
     Page<Invoice> searchByCustomerNameKeyword(@Param("keyword") String keyword, Pageable pageable);
 
-    Invoice findFirstByDiningTableIdOrderByCreatedAtDesc(Long diningTableId);
+    Invoice findFirstByDiningTableIdOrderByCreatedAtDesc(String diningTableId);
 
     List<Invoice> findByCustomerId(Long customerId);
 
@@ -30,4 +30,5 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
             "JOIN od.food f " +
             "WHERE i.id = :invoiceId and od.status = :status " +
             "GROUP BY f.id, f.name, f.imageUrl, od.priceAtOrder")
-    List<InvoiceItemResponse> findInvoiceItemsByInvoiceId(@Param("invoiceId") Long invoiceId, @Param("status") OrderStatus status);}
+    List<InvoiceItemResponse> findInvoiceItemsByInvoiceId(@Param("invoiceId") String invoiceId, @Param("status") OrderStatus status);
+}

@@ -37,7 +37,7 @@ public class DiningTableController {
 
     @Operation(summary = "Find dining table by id")
     @GetMapping("/{id}")
-    public ResponseData<DiningTableResponse> getDiningTableById(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") Long id) {
+    public ResponseData<DiningTableResponse> getDiningTableById(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id) {
         log.info("Getting dining table by id: {}", id);
         DiningTableResponse response = diningTableService.getById(id);
         return ResponseData.<DiningTableResponse>builder()
@@ -49,15 +49,15 @@ public class DiningTableController {
 
     @Operation(summary = "Create new dining table")
     @PostMapping("/")
-    public ResponseData<Long> createDiningTable(@Valid @RequestBody DiningTableRequest request) {
+    public ResponseData<String> createDiningTable(@Valid @RequestBody DiningTableRequest request) {
         log.info("Creating dining table with request: {}", request);
-        Long tableId = diningTableService.save(request);
+        String tableId = diningTableService.save(request);
         return new ResponseData<>(HttpStatus.CREATED.value(), "Create dining table successfully", tableId);
     }
 
     @Operation(summary = "Update dining table")
     @PutMapping("/{id}")
-    public ResponseData<Void> updateDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") Long id,
+    public ResponseData<Void> updateDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id,
                                              @Valid @RequestBody DiningTableRequest request) {
         log.info("Updating dining table id: {} with request: {}", id, request);
         diningTableService.update(id, request);
@@ -66,7 +66,7 @@ public class DiningTableController {
 
     @Operation(summary = "Delete dining table")
     @DeleteMapping("/{id}")
-    public ResponseData<Void> deleteDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") Long id) {
+    public ResponseData<Void> deleteDiningTable(@PathVariable @Min(value = 1, message = "ID must be greater than or equal to 1") String id) {
         log.info("Deleting dining table id: {}", id);
         diningTableService.delete(id);
         return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Delete dining table successfully", null);

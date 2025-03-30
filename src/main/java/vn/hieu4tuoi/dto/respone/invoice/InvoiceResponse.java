@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @SuperBuilder
 public class InvoiceResponse {
-    private Long id;
+    private String id;
     List<InvoiceItemResponse> items;
     private String dinningTableName;
     private CustomerResponse customer;

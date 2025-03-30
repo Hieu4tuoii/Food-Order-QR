@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderService {
     Long saveOrder(OrderRequest request) ;
-    List<OrderResponse> getOrderByDiningTableId(Long diningTableId);
+    List<OrderResponse> getOrderByDiningTableId(String diningTableId);
     void changeOrderDetailStatus(OrderChangeStatusRequest request);
     void changeOrderStatus(OrderChangeStatusRequest request);
 }

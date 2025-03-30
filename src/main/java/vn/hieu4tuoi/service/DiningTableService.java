@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface DiningTableService {
     List<DiningTableResponse> getDiningTableList(String keyword) ;
-    DiningTableResponse getById(Long id);
-    Long save(DiningTableRequest request);
-    void update(Long id, DiningTableRequest request);
-    void delete(Long id);
+    DiningTableResponse getById(String id);
+    String save(DiningTableRequest request);
+    void update(String id, DiningTableRequest request);
+    void delete(String id);
 }

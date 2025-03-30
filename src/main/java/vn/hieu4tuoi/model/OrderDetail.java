@@ -17,6 +17,7 @@ public class OrderDetail extends AbstractEntity<Long> {
     
     private Double priceAtOrder;
 
+    @Builder.Default //phai them builder.default de tranh truyen vao null
     private OrderStatus status = OrderStatus.PENDING; // mac dinh la dang cho
     
     @ManyToOne(fetch = FetchType.LAZY)

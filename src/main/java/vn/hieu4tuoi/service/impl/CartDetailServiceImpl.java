@@ -3,6 +3,7 @@ package vn.hieu4tuoi.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import vn.hieu4tuoi.common.FoodStatus;
 import vn.hieu4tuoi.dto.request.cartDetail.CartDetailCreationRequest;
 import vn.hieu4tuoi.dto.request.cartDetail.CartDetailUpdateRequest;
 import vn.hieu4tuoi.dto.respone.cartDetail.CartDetailResponse;
@@ -34,9 +35,12 @@ public class CartDetailServiceImpl implements CartDetailService {
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         
-        Food food = foodRepository.findById(request.getFoodId())
+        Food food = foodRepository.findByIdAndStatusIn(request.getFoodId(), FoodStatus.getValidStatuses())
                 .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
-        
+        if(food.getStatus() != FoodStatus.AVAILABLE) {
+            throw new ResourceNotFoundException("Food is unavailable");
+        }
+
         // Check if this customer already has this food in cart
         CartDetail existingCartDetail = cartDetailRepository.findByCustomerIdAndFoodId(
                 request.getCustomerId(), request.getFoodId());
@@ -101,6 +105,7 @@ public class CartDetailServiceImpl implements CartDetailService {
                                 .name(cartDetail.getFood().getName())
                                 .imageUrl(cartDetail.getFood().getImageUrl())
                                 .price(cartDetail.getFood().getPrice())
+                                .status( cartDetail.getFood().getStatus())
                                 .build())
                         .createdAt(cartDetail.getCreatedAt())
                         .updatedAt(cartDetail.getUpdatedAt())

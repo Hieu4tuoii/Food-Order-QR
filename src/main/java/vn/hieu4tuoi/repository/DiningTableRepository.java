@@ -11,7 +11,7 @@ import vn.hieu4tuoi.model.DiningTable;
 import java.util.List;
 
 @Repository
-public interface DiningTableRepository extends JpaRepository<DiningTable, Long> {
+public interface DiningTableRepository extends JpaRepository<DiningTable, String> {
     @Query("SELECT dt FROM DiningTable dt WHERE LOWER(dt.name) LIKE :keyword")
     List<DiningTable> searchByKeyword(@Param("keyword") String keyword);
 }

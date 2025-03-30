@@ -53,7 +53,7 @@ public class DiningTableServiceImpl implements DiningTableService {
     }
 
     @Override
-    public DiningTableResponse getById(Long id) {
+    public DiningTableResponse getById(String id) {
         log.info("Getting dining table by id {}", id);
         DiningTable diningTable = diningTableRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dining table not found"));
@@ -65,7 +65,7 @@ public class DiningTableServiceImpl implements DiningTableService {
     }
 
     @Override
-    public Long save(DiningTableRequest request) {
+    public String save(DiningTableRequest request) {
         log.info("Saving dining table with name: {}", request.getName());
         DiningTable diningTable = DiningTable.builder()
                 .name(request.getName())
@@ -76,7 +76,7 @@ public class DiningTableServiceImpl implements DiningTableService {
     }
 
     @Override
-    public void update(Long id, DiningTableRequest request) {
+    public void update(String id, DiningTableRequest request) {
         log.info("Updating dining table id {} with name: {}", id, request.getName());
         DiningTable diningTable = diningTableRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dining table not found"));
@@ -86,7 +86,7 @@ public class DiningTableServiceImpl implements DiningTableService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(String id) {
         log.info("Deleting dining table id {}", id);
         DiningTable diningTable = diningTableRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dining table not found"));

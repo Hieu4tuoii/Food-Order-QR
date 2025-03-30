@@ -9,6 +9,6 @@ import java.io.Serializable;
 @ToString
 public class OrderRequest implements Serializable {
     private Long customerId;
-    private Long diningTableId;
+    private String diningTableId;
 
 }

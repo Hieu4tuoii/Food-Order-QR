@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.hieu4tuoi.common.FoodStatus;
 import vn.hieu4tuoi.common.OrderStatus;
 import vn.hieu4tuoi.common.PaymentStatus;
 import vn.hieu4tuoi.common.TableStatus;
@@ -73,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     //get order list by dining table id
-    public List<OrderResponse> getOrderByDiningTableId(Long diningTableId) {
+    public List<OrderResponse> getOrderByDiningTableId(String diningTableId) {
         log.info("Request get order by dining table id {}", diningTableId);
         Invoice invoiceFirstInTable = invoiceRepository.findFirstByDiningTableIdOrderByCreatedAtDesc(diningTableId);
         //neu hoa don khong ton tai hoac da thanh toan thi tra ve rỗng
@@ -157,6 +158,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderDetail cartDetailToOrderDetail(CartDetail cartDetail){
+        //kiem tra xem food co ton tai khong
+        Food food = cartDetail.getFood();
+        //kiem tra food con hang
+        if(food.getStatus() == FoodStatus.UNAVAILABLE){
+            throw new ResourceNotFoundException(food.getName()+" is unavailable");
+        }
         return OrderDetail.builder()
                 .quantity(cartDetail.getQuantity())
                 .priceAtOrder(cartDetail.getFood().getPrice())

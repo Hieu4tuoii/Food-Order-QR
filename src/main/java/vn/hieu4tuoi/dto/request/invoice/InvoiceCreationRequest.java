@@ -10,6 +10,6 @@ public class InvoiceCreationRequest {
     @NotNull(message = "customerId must not be null")
     private Long customerId;
     @NotNull(message = "diningTableId must not be null")
-    private Long diningTableId;
+    private String diningTableId;
 
 }

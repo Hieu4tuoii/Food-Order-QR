@@ -1,11 +1,10 @@
 package vn.hieu4tuoi.service;
-
 import vn.hieu4tuoi.dto.request.food.FoodCreationRequest;
+import vn.hieu4tuoi.dto.request.food.FoodStatusChangeRequest;
 import vn.hieu4tuoi.dto.request.food.FoodUpdateRequest;
 import vn.hieu4tuoi.dto.respone.food.FoodDetailResponse;
 import vn.hieu4tuoi.dto.respone.PageResponse;
 import vn.hieu4tuoi.dto.respone.food.FoodResponse;
-
 import java.util.List;
 
 public interface FoodService {
@@ -15,4 +14,5 @@ public interface FoodService {
     Long save(FoodCreationRequest req);
     void update(FoodUpdateRequest request);
     void delete(Long foodId);
+    void changeStatus(FoodStatusChangeRequest request);
 }

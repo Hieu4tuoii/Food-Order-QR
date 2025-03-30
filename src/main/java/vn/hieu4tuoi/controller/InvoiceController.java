@@ -37,7 +37,7 @@ public class InvoiceController {
 //                .build();
 //    }
 
-    @Operation(summary = "Get invoices by customer id")
+    @Operation(summary = "Get invoices by customer id", description = "Lấy danh sách hóa đơn theo id khách hàng")
     @GetMapping("/customer/{customerId}")
     public ResponseData<List<InvoiceResponse>> getInvoicesByCustomerId(@PathVariable @Min(value = 1, message = "customerId must be equals or greater than 1") Long customerId) {
         log.info("Getting invoices for customer id: {}", customerId);
@@ -49,38 +49,12 @@ public class InvoiceController {
                 .build();
     }
 
-//    @Operation(summary = "Save invoice")
-//    @PostMapping("/")
-//    public ResponseData<Long> saveInvoice(@Valid @RequestBody InvoiceCreationRequest request) {
-//        log.info("Request save invoice {}", request.toString());
-//        Long invoiceId = invoiceService.save(request);
-//        return new ResponseData<>(HttpStatus.CREATED.value(), "Save invoice success", invoiceId);
-//    }
-
-//    @Operation(summary = "Update invoice")
-//    @PutMapping("/")
-//    public ResponseData<Void> updateInvoice(@Valid @RequestBody PaymentMethodChangeRequest request) {
-//        log.info("Request update invoice {}", request.toString());
-//        invoiceService.update(request);
-//        return new ResponseData<>(HttpStatus.OK.value(), "Update invoice success", null);
-//    }
-
-//
-
-
-    @Operation(summary = "change invoice status")
-    @PatchMapping("/changeStatus")
-    public ResponseData<Void> changeInvoiceStatus(@Valid @RequestBody PaymentStatusChangeRequest request) {
+    @Operation(summary = "confirmPayment", description = "Xác nhận thanh toán hóa đơn ( bao gồm cập nhật trạng thái thanh toán và phương thức thanh toán")
+    @PatchMapping("/confirmPayment/{id}")
+    public ResponseData<Void> confirmPaymentByInvoiceId( @Valid @RequestBody PaymentStatusChangeRequest request) {
         log.info("Request change status method {}", request.toString());
-        invoiceService.changePaymentStatus(request);
-        return new ResponseData<>(HttpStatus.OK.value(), "change invoice status success", null);
+        invoiceService.confirmPayment(request);
+        return new ResponseData<>(HttpStatus.NO_CONTENT.value(), "change invoice status success", null);
     }
 
-    @Operation(summary = "Delete invoice by id")
-    @DeleteMapping("/{id}")
-    public ResponseData<Void> deleteInvoice(@PathVariable @Min(value = 1, message = "invoiceId must be equals or greater than 1") Long id) {
-        log.info("Request delete invoice with id: {}", id);
-        invoiceService.delete(id);
-        return new ResponseData<>(HttpStatus.OK.value(), "Delete invoice success", null);
-    }
 }

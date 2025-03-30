@@ -34,7 +34,7 @@ public class OrderController {
     @Operation(summary = "Lấy order list của bàn ăn", description = "Lấy ds đơn hàng thuộc hóa đơn đang được đặt tại bàn ăn")
     //get order by dining table id ( lay nhung order cua hoa don dang duoc dat)
      @GetMapping("/diningTable/{diningTableId}")
-    public ResponseData<List<OrderResponse>> getOrderByDiningTableId(@PathVariable Long diningTableId) {
+    public ResponseData<List<OrderResponse>> getOrderByDiningTableId(@PathVariable String diningTableId) {
          log.info("Request get order by dining table id {}", diningTableId);
          return new ResponseData<>(HttpStatus.OK.value(), "get order success", orderService.getOrderByDiningTableId(diningTableId));
      }

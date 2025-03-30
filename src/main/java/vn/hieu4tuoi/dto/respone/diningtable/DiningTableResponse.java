@@ -9,7 +9,7 @@ import vn.hieu4tuoi.common.TableStatus;
 @Setter
 @Builder
 public class DiningTableResponse {
-    private Long id;
+    private String id;
     private String name;
     private TableStatus status;
 }
