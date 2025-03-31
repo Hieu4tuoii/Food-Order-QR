@@ -9,14 +9,11 @@ import java.util.List;
 public interface InvoiceService {
 
     InvoiceResponse getById(String invoiceId);
-
-    String save(InvoiceCreationRequest request);
-    
+//    String save(InvoiceCreationRequest request);
 //    void update(PaymentMethodChangeRequest request);
     //void changePaymentMethod(PaymentMethodChangeRequest request);
     void confirmPayment(PaymentStatusChangeRequest request);
-    
-    void delete(String invoiceId);
-    
+//    void delete(String invoiceId);
     List<InvoiceResponse> getInvoicesByCustomerId(Long customerId);
+    InvoiceResponse getCurrentTableInvoice(String tableId);
 }

@@ -57,4 +57,17 @@ public class InvoiceController {
         return new ResponseData<>(HttpStatus.NO_CONTENT.value(), "change invoice status success", null);
     }
 
+    //get invoice by dining table id (lấy hóa đơn đang đưuọc đặt tại bàn ăn)
+    @Operation(summary = "Get invoice by diningTableId", description = "Lấy hóa đơn đang được đặt tại bàn ăn")
+    @GetMapping("/diningTable/{diningTableId}")
+    public ResponseData<InvoiceResponse> getInvoicesByCustomerId(@PathVariable String diningTableId) {
+        log.info("Getting invoice in diningTable id: {}", diningTableId);
+        InvoiceResponse invoice = invoiceService.getCurrentTableInvoice(diningTableId);
+        return ResponseData.<InvoiceResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message("Get current table invoice successfully")
+                .data(invoice)
+                .build();
+    }
+
 }

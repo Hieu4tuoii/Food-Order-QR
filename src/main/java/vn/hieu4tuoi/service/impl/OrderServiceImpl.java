@@ -133,6 +133,21 @@ public class OrderServiceImpl implements OrderService {
         }
         if(checkOrderDetail){
             order.setStatus(OrderStatus.DELIVERED);
+
+            //kiem tra xem tat cả order cua invoice da giao chua
+            boolean checkInvoice = true;
+            for (Order orderItem : order.getInvoice().getOrders()) {
+                if (orderItem.getStatus() == OrderStatus.PENDING) {
+                    checkInvoice = false;
+                    break;
+                }
+            }
+            //neu tat ca order da giao thi set trang thai cho cho dining table
+            if(checkInvoice){
+                DiningTable diningTable = order.getInvoice().getDiningTable();
+                diningTable.setStatus(TableStatus.BOOKED);
+                diningTableRepository.save(diningTable);
+            }
         }
 
         //save order and order detail

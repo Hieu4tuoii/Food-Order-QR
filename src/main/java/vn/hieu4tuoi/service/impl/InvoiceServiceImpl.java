@@ -32,7 +32,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final CustomerRepository customerRepository;
     private final DiningTableRepository diningTableRepository;
 
-
     @Override
     public InvoiceResponse getById(String invoiceId) {
         log.info("Getting invoice by id {}", invoiceId);
@@ -40,7 +39,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
 
         //tính tổng số lượng cua mỗi món ăn
-
         List<InvoiceItemResponse> invoiceItemResponseList = invoiceRepository.findInvoiceItemsByInvoiceId(invoiceId, OrderStatus.DELIVERED);
                 
         return InvoiceResponse.builder()
@@ -61,22 +59,22 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .build();
     }
 
-    @Override
-    public String save(InvoiceCreationRequest request) {
-        log.info("Creating new invoice for customer id: {}", request.getCustomerId());
-        Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-        DiningTable dinningTable = diningTableRepository.findById(request.getDiningTableId())
-                .orElseThrow(() -> new ResourceNotFoundException("Dining table not found"));
-                
-        Invoice invoice = Invoice.builder()
-                .customer(customer)
-                .diningTable(dinningTable)
-                .build();
-                
-        invoiceRepository.save(invoice);
-        return invoice.getId();
-    }
+//    @Override
+//    public String save(InvoiceCreationRequest request) {
+//        log.info("Creating new invoice for customer id: {}", request.getCustomerId());
+//        Customer customer = customerRepository.findById(request.getCustomerId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+//        DiningTable dinningTable = diningTableRepository.findById(request.getDiningTableId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Dining table not found"));
+//
+//        Invoice invoice = Invoice.builder()
+//                .customer(customer)
+//                .diningTable(dinningTable)
+//                .build();
+//
+//        invoiceRepository.save(invoice);
+//        return invoice.getId();
+//    }
 
 //    @Override
 //    public void changePaymentMethod(PaymentMethodChangeRequest request) {
@@ -107,14 +105,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
-    @Override
-    public void delete(String invoiceId) {
-        log.info("Deleting invoice with id: {}", invoiceId);
-        Invoice invoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
-                
-        invoiceRepository.delete(invoice);
-    }
+//    @Override
+//    public void delete(String invoiceId) {
+//        log.info("Deleting invoice with id: {}", invoiceId);
+//        Invoice invoice = invoiceRepository.findById(invoiceId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
+//
+//        invoiceRepository.delete(invoice);
+//    }
 
     @Override
     public List<InvoiceResponse> getInvoicesByCustomerId(Long customerId) {
@@ -122,19 +120,60 @@ public class InvoiceServiceImpl implements InvoiceService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         List<Invoice> invoices = invoiceRepository.findByCustomerId(customerId);
+
+
         return invoices.stream()
-                .map(invoice -> InvoiceResponse.builder()
-                        .id(invoice.getId())
-                        .paymentStatus(invoice.getPaymentStatus())
-                        .paymentMethod(invoice.getPaymentMethod())
-                        .customer(CustomerResponse.builder()
-                                .id(invoice.getCustomer().getId())
-                                .name(invoice.getCustomer().getName())
-                                .build())
-                        .dinningTableName(invoice.getDiningTable().getName())
-                        .createdAt(invoice.getCreatedAt())
-                        .updatedAt(invoice.getUpdatedAt())
-                        .build())
+                .map(invoice -> {
+                    List<InvoiceItemResponse> invoiceItemResponseList = invoiceRepository.findInvoiceItemsByInvoiceId(invoice.getId(), OrderStatus.DELIVERED);
+                    return InvoiceResponse.builder()
+                            .id(invoice.getId())
+                            .paymentStatus(invoice.getPaymentStatus())
+                            .paymentMethod(invoice.getPaymentMethod())
+                            .items(invoiceItemResponseList)
+                            .customer(CustomerResponse.builder()
+                                    .id(invoice.getCustomer().getId())
+                                    .name(invoice.getCustomer().getName())
+                                    .build())
+                            .totalPrice(invoiceItemResponseList.stream()
+                                    .mapToDouble(InvoiceItemResponse::getTotalPrice)
+                                    .sum())
+                            .createdAt(invoice.getCreatedAt())
+                            .updatedAt(invoice.getUpdatedAt())
+                            .dinningTableName(invoice.getDiningTable().getName())
+                            .build();
+                })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public InvoiceResponse getCurrentTableInvoice(String tableId) {
+        log.info("Getting current invoice for table id: {}", tableId);
+        DiningTable diningTable = diningTableRepository.findById(tableId)
+                .orElseThrow(() -> new ResourceNotFoundException("Dining table not found"));
+        //lay ra invoice chua thanh toan cua bàn
+        Invoice invoice = invoiceRepository.findFirstByDiningTableIdAndPaymentStatus(tableId, PaymentStatus.UNPAID);
+        if (invoice == null) {
+            throw new ResourceNotFoundException("Invoice not found");
+        }
+
+        //tính tổng số lượng cua mỗi món ăn
+        List<InvoiceItemResponse> invoiceItemResponseList = invoiceRepository.findInvoiceItemsByInvoiceId(invoice.getId(), OrderStatus.DELIVERED);
+
+        return InvoiceResponse.builder()
+                .id(invoice.getId())
+                .paymentStatus(invoice.getPaymentStatus())
+                .paymentMethod(invoice.getPaymentMethod())
+                .items(invoiceItemResponseList)
+                .customer(CustomerResponse.builder()
+                        .id(invoice.getCustomer().getId())
+                        .name(invoice.getCustomer().getName())
+                        .build())
+                .totalPrice(invoiceItemResponseList.stream()
+                        .mapToDouble(InvoiceItemResponse::getTotalPrice) // Lấy tổng giá trị
+                        .sum())
+                .createdAt(invoice.getCreatedAt())
+                .updatedAt(invoice.getUpdatedAt())
+                .dinningTableName(invoice.getDiningTable().getName())
+                .build();
     }
 }

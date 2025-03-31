@@ -31,4 +31,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
             "WHERE i.id = :invoiceId and od.status = :status " +
             "GROUP BY f.id, f.name, f.imageUrl, od.priceAtOrder")
     List<InvoiceItemResponse> findInvoiceItemsByInvoiceId(@Param("invoiceId") String invoiceId, @Param("status") OrderStatus status);
+
+    Invoice findFirstByDiningTableIdAndPaymentStatus(String diningTableId, PaymentStatus paymentStatus);
 }

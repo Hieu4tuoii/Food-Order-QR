@@ -1,5 +1,12 @@
 package vn.hieu4tuoi.dto.respone.bank;
 
+import lombok.*;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Builder
+@Setter
 public class Transaction {
     private String id;
     private String bankBrandName;
