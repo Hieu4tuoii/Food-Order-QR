@@ -1,4 +1,4 @@
-package vn.hieu4tuoi.dto.respone.chatHistory;
+package vn.hieu4tuoi.dto.respone.chat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

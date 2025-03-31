@@ -132,6 +132,21 @@ public class FoodServiceImpl implements FoodService {
                 .build();
     }
 
+    //get all food detail
+    @Override
+    public List<FoodDetailResponse> getAllFood() {
+        return foodRepository.getListAllByStatusIn(FoodStatus.getValidStatuses()).stream()
+                .map(food -> FoodDetailResponse.builder()
+                        .id(food.getId())
+                        .name(food.getName())
+                        .price(food.getPrice())
+                        .description(food.getDescription())
+                        .imageUrl(food.getImageUrl())
+                        .status(food.getStatus())
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     @Override
     public FoodDetailResponse getById(Long foodId) {
         log.info("Getting food by id {}", foodId);

@@ -15,4 +15,5 @@ public interface FoodService {
     void update(FoodUpdateRequest request);
     void delete(Long foodId);
     void changeStatus(FoodStatusChangeRequest request);
+    List<FoodDetailResponse> getAllFood();
 }

@@ -121,7 +121,6 @@ public class OrderServiceImpl implements OrderService {
                 () -> new ResourceNotFoundException("Order detail not found"));
         //check status
         orderDetail.setStatus(request.getStatus());
-
         //get order
         Order order = orderDetail.getOrder();
         //nếu tất cả các order detail koong con dang cho thi set trang thai cho order
@@ -149,11 +148,23 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(request.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Order not found"));
         //nếu orderdetail trong order còn đang chờ thì chuyển sang da giao
-        for(OrderDetail orderDetail : order.getOrderDetails()){
-            if(orderDetail.getStatus() == OrderStatus.PENDING){
-                orderDetail.setStatus(OrderStatus.DELIVERED);
+        if(request.getStatus().equals(OrderStatus.DELIVERED)) {
+            for (OrderDetail orderDetail : order.getOrderDetails()) {
+                if (orderDetail.getStatus() == OrderStatus.PENDING) {
+                    orderDetail.setStatus(OrderStatus.DELIVERED);
+                }
             }
         }
+
+        if(request.getStatus().equals(OrderStatus.CANCELLED)) {
+            for (OrderDetail orderDetail : order.getOrderDetails()) {
+                if (orderDetail.getStatus() == OrderStatus.PENDING) {
+                    orderDetail.setStatus(OrderStatus.CANCELLED);
+                }
+            }
+        }
+        //set status cho order
+        order.setStatus(request.getStatus());
 
         //save order
         orderRepository.save(order);

@@ -26,6 +26,9 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
     //findall and status in
     Page<Food> findAllByStatusIn(@Param("statuses") List<FoodStatus> statuses, Pageable pageable);
 
+    //findall and status in
+    List<Food> getListAllByStatusIn(@Param("statuses") List<FoodStatus> statuses);
+
     Optional<Food> findByIdAndStatusIn(Long id, List<FoodStatus> statuses);
 
     //remove food
