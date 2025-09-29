@@ -18,5 +18,9 @@ public class OrderDetailResponse {
     private OrderStatus status;
     private Double totalPrice;
 
+    public String toJson() {
+        return String.format("{\"quantity\":%d,\"foodName\":%s,\"status\":\"%s\",\"totalPrice\":%.2f}",
+               quantity, food.getName(), status, totalPrice);
+    }
 
 }

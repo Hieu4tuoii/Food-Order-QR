@@ -1,13 +1,16 @@
 package vn.hieu4tuoi.dto.request.order;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.io.Serializable;
+import java.util.List;
 
 @Getter
+@Builder
 @ToString
-public class OrderRequest implements Serializable {
+public class OrderByAIRequest {
     private Long customerId;
     private String diningTableId;
+    private List<OrderItemByAIRequest> items;
 }

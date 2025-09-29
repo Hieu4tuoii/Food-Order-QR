@@ -1,19 +1,25 @@
 package vn.hieu4tuoi.dto.respone.chat;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import vn.hieu4tuoi.common.RoleChat;
+import vn.hieu4tuoi.model.Customer;
+import vn.hieu4tuoi.model.ToolCall;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class ChatHistoryResponse {
     private Long id;
-    private String message;
+    private String content;
     private String role;
+    private List<ToolCall> toolCalls;
+    private String toolCallId;
     private LocalDateTime createdAt;
 }

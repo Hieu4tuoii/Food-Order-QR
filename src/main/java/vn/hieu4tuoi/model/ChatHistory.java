@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import vn.hieu4tuoi.common.RoleChat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,17 +20,29 @@ public class ChatHistory {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "message", columnDefinition = "TEXT")
-    private String message;
+    @Column(name = "content", columnDefinition = "TEXT")
+    private String content;
     @Enumerated(EnumType.STRING)
     private RoleChat role;
     //quan hệ n-1 với customer
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
+    //quan hệ 1-n với toolcall
+    @OneToMany(mappedBy = "chatHistory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ToolCall> toolCalls;
+    private String toolCallId;
     //thời gian tạo
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public void addToolCall(ToolCall toolCall) {
+        if (toolCalls == null) {
+            toolCalls = new ArrayList<>();
+        }
+        toolCalls.add(toolCall);
+        toolCall.setChatHistory(this);
+    }
 
 }

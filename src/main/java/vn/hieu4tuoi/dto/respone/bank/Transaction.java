@@ -9,15 +9,15 @@ import lombok.*;
 @Setter
 public class Transaction {
     private String id;
-    private String bankBrandName;
-    private String accountNumber;
-    private String transactionDate;
-    private String amountOut;
-    private String amountIn;
+    private String bank_brand_name;
+    private String account_number;
+    private String transaction_date;
+    private String amount_out;
+    private String amount_in;
     private String accumulated;
-    private String transactionContent;
-    private String referenceNumber;
+    private String transaction_content;
+    private String reference_number;
     private String code;
-    private String subAccount;
-    private String bankAccountId;
+    private String sub_account;
+    private String bank_account_id;
 }

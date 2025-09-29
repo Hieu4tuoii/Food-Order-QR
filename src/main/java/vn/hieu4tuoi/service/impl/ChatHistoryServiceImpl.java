@@ -6,14 +6,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.hieu4tuoi.common.RoleChat;
 import vn.hieu4tuoi.dto.request.chatbot.ChatRequest;
-import vn.hieu4tuoi.dto.request.chatbot.ChatToAiRequest;
-import vn.hieu4tuoi.dto.respone.ChatHistoryResponse;
 import vn.hieu4tuoi.dto.respone.PageResponse;
+import vn.hieu4tuoi.dto.respone.chat.ChatHistoryResponse;
 import vn.hieu4tuoi.exception.ResourceNotFoundException;
 import vn.hieu4tuoi.mapper.ChatHistoryMapper;
 import vn.hieu4tuoi.model.ChatHistory;
 import vn.hieu4tuoi.model.Customer;
+import vn.hieu4tuoi.model.ToolCall;
 import vn.hieu4tuoi.repository.ChatHistoryRepository;
 import vn.hieu4tuoi.repository.CustomerRepository;
 import vn.hieu4tuoi.service.ChatHistoryService;
@@ -26,24 +27,56 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ChatHistoryServiceImpl implements ChatHistoryService {
-
     private final ChatHistoryRepository chatHistoryRepository;
     private final CustomerRepository customerRepository;
     private final ChatHistoryMapper chatHistoryMapper;
 
     @Override
     @Transactional
-    public ChatHistoryResponse save(ChatRequest request) {
+    public Long save(ChatRequest request) {
         // Find the customer or throw an exception if not found
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + request.getCustomerId()));
 
-        // Create and save the chat history
-        ChatHistory chatHistory = chatHistoryMapper.toEntity(request, customer);
-        ChatHistory savedChatHistory = chatHistoryRepository.save(chatHistory);
+        ChatHistory chatHistory = new ChatHistory();
+        // Map the request to the entity
+        chatHistory.setContent(request.getContent());
+        chatHistory.setCustomer(customer);
+        chatHistory.setRole(request.getRole());
+        //lan luot set chat vao cac toolcall
+        for (ToolCall toolCall : request.getToolCalls()) {
+            chatHistory.addToolCall(toolCall);
+        }
 
-        // Return the DTO of the saved chat history
-        return chatHistoryMapper.toDto(savedChatHistory);
+        chatHistoryRepository.save(chatHistory);
+
+        return chatHistory.getId();
+    }
+
+    @Override
+    public Long saveAndFlush(ChatRequest request) {
+        // Find the customer or throw an exception if not found
+        Customer customer = customerRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + request.getCustomerId()));
+
+        ChatHistory chatHistory = new ChatHistory();
+        // Map the request to the entity
+        chatHistory.setContent(request.getContent());
+        chatHistory.setCustomer(customer);
+        chatHistory.setRole(request.getRole());
+        if(request.getToolCallId() != null) {
+            chatHistory.setToolCallId(request.getToolCallId());
+        }
+        //lan luot set chat vao cac toolcallif
+        if (request.getToolCalls() != null) {
+            for (ToolCall toolCall : request.getToolCalls()) {
+                chatHistory.addToolCall(toolCall);
+            }
+        }
+
+        chatHistoryRepository.saveAndFlush(chatHistory);
+
+        return chatHistory.getId();
     }
 
     @Override
@@ -55,7 +88,7 @@ public class ChatHistoryServiceImpl implements ChatHistoryService {
         }
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<ChatHistory> chatHistories = chatHistoryRepository.findByCustomerIdOrderByCreatedAtDescRoleAsc(customerId, pageable);
+        Page<ChatHistory> chatHistories = chatHistoryRepository.findByCustomerIdAndRoleInAndToolCallsIsEmptyAndToolCallIdIsNullOrderByIdDesc(customerId, List.of(RoleChat.user, RoleChat.assistant), pageable);
 
         //chuyen chat history sang dto
         List<ChatHistoryResponse> chatHistoryResponses = chatHistories.getContent().stream()
@@ -83,7 +116,7 @@ public class ChatHistoryServiceImpl implements ChatHistoryService {
         }
 
         // Get recent chat histories
-        List<ChatHistory> chatHistories = chatHistoryRepository.findTop10ByCustomerIdAndCreatedAtBetweenOrderByCreatedAtDescRoleAsc(customerId, LocalDateTime.now().minusDays(1), LocalDateTime.now());
+        List<ChatHistory> chatHistories = chatHistoryRepository.findTop40ByCustomerIdAndCreatedAtBetweenOrderByIdDesc(customerId, LocalDateTime.now().minusDays(1), LocalDateTime.now());
 
         //dao nguoc danh sach chat history
         Collections.reverse(chatHistories);

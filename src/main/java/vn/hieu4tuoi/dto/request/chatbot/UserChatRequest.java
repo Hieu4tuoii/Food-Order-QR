@@ -8,9 +8,11 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatToAiRequest {
+public class UserChatRequest {
     @NotBlank(message = "Message cannot be blank")
-    private String message;
+    private String content;
     @NotNull(message = "Customer ID cannot be null")
     private Long customerId;
+    @NotNull(message = "dinningTableId cannot be null")
+    private String diningTableId;
 }

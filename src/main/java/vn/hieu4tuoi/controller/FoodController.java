@@ -58,7 +58,7 @@ public class FoodController {
     @GetMapping("/")
     public ResponseData<PageResponse<List<FoodResponse>>> getFoodList(@RequestParam(value = "keyword", required = false) String keyword,
                                                                       @RequestParam(value = "page", defaultValue = "1") int page,
-                                                                      @RequestParam(value = "size", defaultValue = "10") int size,
+                                                                      @RequestParam(value = "size", defaultValue = "30") int size,
                                                                       @RequestParam(value = "sort", required = false) String sort) {
         log.info("Getting food list by keyword {} sort: {}, page: {}, size: {}", keyword, sort, page, size);
             return new ResponseData<>(HttpStatus.OK.value(), "get food list success", foodService.getFoodList( keyword, sort, page, size));

@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.hieu4tuoi.common.RoleChat;
+import vn.hieu4tuoi.model.ToolCall;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,8 +17,10 @@ import vn.hieu4tuoi.common.RoleChat;
 @NoArgsConstructor
 public class ChatRequest {
     @NotBlank(message = "Message cannot be blank")
-    private String message;
+    private String content;
     private RoleChat role;
     @NotNull(message = "Customer ID cannot be null")
     private Long customerId;
+    private String toolCallId;
+    private List<ToolCall> toolCalls;
 }

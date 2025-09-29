@@ -1,5 +1,6 @@
 package vn.hieu4tuoi.service;
 
+import vn.hieu4tuoi.dto.request.order.OrderByAIRequest;
 import vn.hieu4tuoi.dto.request.order.OrderChangeStatusRequest;
 import vn.hieu4tuoi.dto.request.order.OrderRequest;
 import vn.hieu4tuoi.dto.respone.order.OrderResponse;
@@ -11,4 +12,5 @@ public interface OrderService {
     List<OrderResponse> getOrderByDiningTableId(String diningTableId);
     void changeOrderDetailStatus(OrderChangeStatusRequest request);
     void changeOrderStatus(OrderChangeStatusRequest request);
+    Long saveOrderByAI(OrderByAIRequest request);
 }
