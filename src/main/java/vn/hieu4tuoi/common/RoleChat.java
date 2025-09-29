@@ -4,4 +4,6 @@ public enum RoleChat {
     system,
     user,
     assistant,
+    tool
 }
+

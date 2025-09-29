@@ -5,7 +5,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder()
 public class BaseFoodResponse {
-    private Long id;
-    private String name;
-    private String imageUrl;
+    protected Long id;
+    protected String name;
+    protected String imageUrl;
 }

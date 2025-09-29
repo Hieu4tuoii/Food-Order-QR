@@ -13,6 +13,7 @@ import vn.hieu4tuoi.common.FoodStatus;
 @NoArgsConstructor
 public class Food extends AbstractEntity<Long> {
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private Double price;
     private String imageUrl;

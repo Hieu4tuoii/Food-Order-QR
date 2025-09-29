@@ -4,14 +4,13 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import vn.hieu4tuoi.dto.request.chatbot.ChatToAiRequest;
-import vn.hieu4tuoi.dto.request.chatbot.DeepSeekRequest;
-import vn.hieu4tuoi.dto.respone.ChatHistoryResponse;
+import vn.hieu4tuoi.dto.request.chatbot.UserChatRequest;
 import vn.hieu4tuoi.dto.respone.PageResponse;
 import vn.hieu4tuoi.dto.respone.ResponseData;
+import vn.hieu4tuoi.dto.respone.chat.ChatHistoryResponse;
 import vn.hieu4tuoi.dto.respone.chat.ChatResponse;
 import vn.hieu4tuoi.service.ChatHistoryService;
-import vn.hieu4tuoi.service.impl.DeepSeekServiceImpl;
+import vn.hieu4tuoi.service.impl.ChatBotServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +19,16 @@ import java.util.List;
 @RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
-    private final DeepSeekServiceImpl deepSeekService;
+    private final ChatBotServiceImpl chatBotService;
     private final ChatHistoryService chatHistoryService;
 
     @PostMapping("/")
-    public ChatResponse handleChatMessage(@RequestBody ChatToAiRequest request) {
+    public String handleChatMessage(@RequestBody UserChatRequest request) {
         try {
-            return deepSeekService.getChatResponse(request);
+            return chatBotService.getChatResponse(request);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ChatResponse("Đã có lỗi xảy ra. Vui lòng thử lại sau.", new ArrayList<>());
+            return "Đã có lỗi xảy ra. Vui lòng thử lại sau.";
         }
     }
 
@@ -44,6 +43,5 @@ public class ChatController {
                 .message("Get chat history successfully")
                 .data(chatHistories)
                 .build();
-
     }
 }
